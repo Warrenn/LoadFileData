@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace LoadFileData.ETLLayer.FileReader
+namespace LoadFileData.ETLLayer.ContentReader
 {
     public interface IContentReader : IDisposable
     {

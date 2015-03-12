@@ -35,7 +35,7 @@ namespace LoadFileData.FileWatcherService
             }
             var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser("");
             parser.TextFieldType = FieldType.Delimited;
-            parser.SetFieldWidths();
+            parser.TrimWhiteSpace
             parser.
 
             ServiceBase[] ServicesToRun;

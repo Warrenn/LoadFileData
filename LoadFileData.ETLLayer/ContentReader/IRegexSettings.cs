@@ -1,8 +1,8 @@
 ﻿namespace LoadFileData.ETLLayer.ContentReader
 {
-    public interface IRegexFieldsManager
+    public interface IRegexSettings
     {
         string[] MapHeaders(string[] headers);
-        void AddField(string fieldName, string regexPattern);
+        void SetFieldRegexMapping(string fieldName, string regexPattern);
     }
 }
