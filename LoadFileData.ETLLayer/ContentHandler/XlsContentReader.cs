@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Excel;
+using Excel.Log;
 using LoadFileData.ETLLayer.Constants;
 using LoadFileData.ETLLayer.ContentReader;
-using OfficeOpenXml;
 
 namespace LoadFileData.ETLLayer.ContentHandler
 {
-    public class XlsxContentHandler : IContentReader, IExcelSettings, IRegexSettings
+    public class XlsContentReader : IContentReader, IExcelSettings , IRegexSettings
     {
-        protected ExcelPackage package;
-        protected string[] fieldNames;
-        protected ExcelWorkbook workbook;
+        protected IExcelDataReader reader;
         protected string sheetName;
         protected int sheetNumber = 1;
         protected int headerLineNumber = 1;
         protected string tempFileName = string.Empty;
         protected Stream tempFileStream;
         protected int contentLineNumber = 2;
-
         protected readonly IDictionary<string, Func<object, object>> fieldConversions =
             new SortedDictionary<string, Func<object, object>>();
 
@@ -58,8 +57,7 @@ namespace LoadFileData.ETLLayer.ContentHandler
 
         #region IRegexSettings Members
 
-        public virtual void SetFieldRegexMapping(string fieldName, string regexPattern,
-            Func<object, object> conversion = null)
+        public virtual void SetFieldRegexMapping(string fieldName, string regexPattern, Func<object, object> conversion = null)
         {
             if (conversion == null)
             {
@@ -76,14 +74,28 @@ namespace LoadFileData.ETLLayer.ContentHandler
 
         public virtual IEnumerable<IDictionary<string, object>> RowData(Stream fileStream)
         {
-            package = new ExcelPackage(fileStream);
-            workbook = package.Workbook;
-
-            sheetNumber = ((sheetNumber > 0) && (sheetNumber <= workbook.Worksheets.Count)) ? sheetNumber : 1;
-            var worksheet = (string.IsNullOrEmpty(sheetName))
-                ? workbook.Worksheets[sheetNumber]
-                : workbook.Worksheets[sheetName];
-
+            try
+            {
+                reader = ExcelReaderFactory.CreateBinaryReader(fileStream);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                //Known bug with excel reader sometimes will throw argument out of range exception http://exceldatareader.codeplex.com/discussions/431882
+                var contents = ((MemoryStream) (fileStream)).ToArray();
+                tempFileName = Path.GetTempFileName();
+                File.WriteAllBytes(tempFileName, contents);
+                tempFileStream = new FileStream(tempFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                reader = ExcelReaderFactory.CreateBinaryReader(tempFileStream);
+            }
+            var dataSource = reader.AsDataSet();
+            if (dataSource.Tables.Count < 1)
+            {
+                yield break;
+            }
+            var sheetIndex = ((sheetNumber > 0) && (sheetNumber <= dataSource.Tables.Count)) ? sheetNumber - 1  : 0;
+            var dataTable = (string.IsNullOrEmpty(sheetName))
+                ? dataSource.Tables[sheetIndex]
+                : dataSource.Tables[sheetName];
             if (dataTable.Rows.Count < 1)
             {
                 yield break;
@@ -112,7 +124,7 @@ namespace LoadFileData.ETLLayer.ContentHandler
             for (var rowIndex = contentRowIndex; rowIndex < dataTable.Rows.Count; rowIndex++)
             {
                 var fields = dataTable.Rows[rowIndex].ItemArray;
-
+                
                 var values = new SortedDictionary<string, object>();
                 for (var index = 0; index < fields.Length; index++)
                 {
@@ -133,9 +145,14 @@ namespace LoadFileData.ETLLayer.ContentHandler
 
         public virtual void Dispose()
         {
-            Package.Dispose(PolicyName.Disposable);
+            reader.Dispose(PolicyName.Disposable);
+            tempFileStream.Dispose(PolicyName.Disposable);
+            if ((!string.IsNullOrEmpty(tempFileName)) && (File.Exists(tempFileName)))
+            {
+                File.Delete(tempFileName);
+            }
         }
 
-        #endregion    
+        #endregion
     }
 }

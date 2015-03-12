@@ -10,7 +10,7 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace LoadFileData.ETLLayer.ContentHandler
 {
-    public class DelimiteredContentHandler : ICsvSettings, IContentReader, IRegexSettings
+    public class DelimiteredContentReader : ICsvSettings, IContentReader, IRegexSettings
     {
         protected string[] delimiters = {";", ","};
         protected string[] commentTokens = {};

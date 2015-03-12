@@ -9,7 +9,7 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace LoadFileData.ETLLayer.ContentHandler
 {
-    public class FixedWidthContentHandler : IContentReader, ICsvSettings
+    public class FixedWidthContentReader : IContentReader, ICsvSettings
     {
         protected readonly IDictionary<string, int> fieldWidths = new SortedDictionary<string, int>();
         protected string[] commentTokens = { };

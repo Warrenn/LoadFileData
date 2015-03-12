@@ -81,10 +81,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\PolicyName.cs" />
-    <Compile Include="ContentHandler\DelimiteredContentHandler.cs" />
-    <Compile Include="ContentHandler\FixedWidthContentHandler.cs" />
+    <Compile Include="ContentHandler\DelimiteredContentReader.cs" />
+    <Compile Include="ContentHandler\FixedWidthContentReader.cs" />
     <Compile Include="ContentReader\IExcelSettings.cs" />
-    <Compile Include="ContentHandler\XlsContentHandler.cs" />
+    <Compile Include="ContentHandler\XlsContentReader.cs" />
     <Compile Include="ContentHandler\XlsxContentHandler.cs" />
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="FileHandler\IFileHandler.cs" />

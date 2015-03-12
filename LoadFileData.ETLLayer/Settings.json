@@ -3,14 +3,14 @@
         "FileType": "LISP 1 CSV Fixed",
         "ContentHandlers": [
             {
-                "ContentHandler": "FixedWidth",
+                "ContentType": "FixedWidth",
                 "TrimWhiteSpace": true,
                 "CommentTokens": [ "!", "<#" ],
                 "Fields": [
                     { "name": "Identity", "width": 30 },
                     { "name": "Name", "width": 10 }
                 ],
-                "DataEntryType": "LISP1"
+                "ContentHandler": "LISP1"
             }
         ]
     },
