@@ -1,0 +1,44 @@
+﻿[
+    {
+        "FileType": "LISP 1 CSV Fixed",
+        "ContentHandlers": [
+            {
+                "ContentHandler": "FixedWidth",
+                "TrimWhiteSpace": true,
+                "CommentTokens": [ "!", "<#" ],
+                "Fields": [
+                    { "name": "Identity", "width": 30 },
+                    { "name": "Name", "width": 10 }
+                ],
+                "DataEntryType": "LISP1"
+            }
+        ]
+    },
+    {
+        "FileType": "LISP 1 xls",
+        "ContentHandlers": [
+            {
+                "ContentHandler": "xls",
+                "SheetName": "Sheet1",
+                "HeaderLineNumber": "2",
+                "ContentLineNumber":  "4",
+                "Fields": [
+                    { "name": "Identity", "regex": "{Identity}" },
+                    { "name": "Name", "regex": "{Name}" }
+                ],
+                "DataEntryType": "LISP1"
+            },
+            {
+                "ContentHandler": "xls",
+                "SheetName": "Sheet2",
+                "HeaderLineNumber": "2",
+                "ContentLineNumber":  "4",
+                "Fields": [
+                    { "name": "Identity", "regex": "{Identity}" },
+                    { "name": "Name", "regex": "{Name}" }
+                ],
+                "DataEntryType": "LISP1"
+            }
+        ]
+    }
+]

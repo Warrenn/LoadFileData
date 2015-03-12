@@ -72,22 +72,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\PolicyName.cs" />
+    <Compile Include="ContentHandler\DelimiteredContentHandler.cs" />
+    <Compile Include="ContentHandler\FixedWidthContentHandler.cs" />
     <Compile Include="ContentReader\IExcelSettings.cs" />
+    <Compile Include="ContentHandler\XlsContentHandler.cs" />
+    <Compile Include="ContentHandler\XlsxContentHandler.cs" />
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="FileHandler\IFileHandler.cs" />
-    <Compile Include="ContentReader\IDelimiteredSettings.cs" />
     <Compile Include="ContentReader\IContentReader.cs" />
-    <Compile Include="ContentReader\IFixedLengthSettings.cs" />
+    <Compile Include="ContentReader\ICsvSettings.cs" />
     <Compile Include="ContentReader\IRegexSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TryParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Settings.json" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ContentHandler\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

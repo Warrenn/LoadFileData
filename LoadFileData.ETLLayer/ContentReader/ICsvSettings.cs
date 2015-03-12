@@ -1,8 +1,7 @@
 ﻿namespace LoadFileData.ETLLayer.ContentReader
 {
-    public interface IFixedLengthSettings
+    public interface ICsvSettings
     {
-        void AddFieldWidth(string fieldName, int width);
         string[] CommentTokens { set; }
         bool TrimWhiteSpace { set; }
     }

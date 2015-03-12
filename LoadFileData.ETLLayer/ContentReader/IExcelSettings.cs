@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LoadFileData.ETLLayer.ContentReader
 {
-    public interface IExcelSettings : IRegexSettings
+    public interface IExcelSettings
     {
         string SheetName { set; }
         int SheetNumber { set; }
