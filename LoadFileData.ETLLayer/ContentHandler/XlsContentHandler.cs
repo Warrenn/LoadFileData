@@ -1,39 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
+using Excel;
 using LoadFileData.ETLLayer.ContentReader;
 
 namespace LoadFileData.ETLLayer.ContentHandler
 {
     public class XlsContentHandler : IContentReader, IExcelSettings , IRegexSettings
     {
+        protected IExcelDataReader reader;
+        protected string sheetName;
+        protected int sheetNumber = 1;
+        protected int headerLineNumber = 1;
+        protected int contentLineNumber = 2;
+        protected readonly IDictionary<string, Func<object, object>> fieldConversions =
+            new SortedDictionary<string, Func<object, object>>();
+
+        protected readonly IDictionary<string, string> headerRegExPatterns =
+            new SortedDictionary<string, string>();
+
+
         #region IExcelSettings Members
 
-        public string SheetName
+        public virtual string SheetName
         {
-            set { throw new NotImplementedException(); }
+            set { sheetName = value; }
         }
 
-        public int SheetNumber
+        public virtual int SheetNumber
         {
-            set { throw new NotImplementedException(); }
+            set { sheetNumber = value; }
         }
 
-        public int HeaderLineNumber
+        public virtual int HeaderLineNumber
         {
-            set { throw new NotImplementedException(); }
+            set { headerLineNumber = value; }
         }
 
-        public int ContentLineNumber
+        public virtual int ContentLineNumber
         {
-            set { throw new NotImplementedException(); }
+            set { contentLineNumber = value; }
         }
 
         #endregion
 
         #region IRegexSettings Members
 
-        public void SetFieldRegexMapping(string fieldName, string regexPattern, Action<object, object> conversion = null)
+        public virtual void SetFieldRegexMapping(string fieldName, string regexPattern, Func<object, object> conversion = null)
         {
             throw new NotImplementedException();
         }
@@ -42,8 +56,9 @@ namespace LoadFileData.ETLLayer.ContentHandler
 
         #region IContentReader Members
 
-        public IEnumerable<IDictionary<string, object>> RowData(Stream fileStream)
+        public virtual IEnumerable<IDictionary<string, object>> RowData(Stream fileStream)
         {
+            ExcelReaderFactory.CreateBinaryReader()
             throw new NotImplementedException();
         }
 
@@ -51,7 +66,7 @@ namespace LoadFileData.ETLLayer.ContentHandler
 
         #region IDisposable Members
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             throw new NotImplementedException();
         }

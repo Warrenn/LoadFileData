@@ -27,6 +27,7 @@ namespace LoadFileData.ETLLayer
             catch (Exception exception)
             {
                 Exception rethrowException;
+                policyName = string.IsNullOrEmpty(policyName) ? PolicyName.Default : policyName;
                 if (ExceptionPolicy.HandleException(exception, policyName, out rethrowException))
                 {
                     if (rethrowException == null)

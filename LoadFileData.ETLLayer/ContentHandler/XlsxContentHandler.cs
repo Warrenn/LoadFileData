@@ -33,7 +33,7 @@ namespace LoadFileData.ETLLayer.ContentHandler
 
         #region IRegexSettings Members
 
-        public void SetFieldRegexMapping(string fieldName, string regexPattern, Action<object, object> conversion = null)
+        public void SetFieldRegexMapping(string fieldName, string regexPattern, Func<object, object> conversion = null)
         {
             throw new NotImplementedException();
         }
