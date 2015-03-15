@@ -81,16 +81,45 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\PolicyName.cs" />
-    <Compile Include="ContentHandler\DelimiteredContentReader.cs" />
-    <Compile Include="ContentHandler\FixedWidthContentReader.cs" />
-    <Compile Include="ContentReader\IExcelSettings.cs" />
-    <Compile Include="ContentHandler\XlsContentReader.cs" />
-    <Compile Include="ContentHandler\XlsxContentHandler.cs" />
+    <Compile Include="ContentReader\ContentReaderBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\DelimiteredContentReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\FixedWidthContentReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\CsvContentReaderBase.cs" />
+    <Compile Include="ContentReader\XlsContentReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\XlsxContentReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\Settings\ContentReaderSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\Settings\CsvSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\Settings\DelimitedSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\Settings\ExcelSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\Settings\FieldSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\Settings\FixedWidthSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentReader\IContentReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="FileHandler\IFileHandler.cs" />
-    <Compile Include="ContentReader\IContentReader.cs" />
-    <Compile Include="ContentReader\ICsvSettings.cs" />
-    <Compile Include="ContentReader\IRegexSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TryParser.cs" />
   </ItemGroup>
@@ -98,7 +127,9 @@
     <None Include="packages.config" />
     <None Include="Settings.json" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ContentHandler\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
