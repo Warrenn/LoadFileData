@@ -1,44 +1,66 @@
-﻿[
-    {
-        "FileType": "LISP 1 CSV Fixed",
-        "ContentHandlers": [
-            {
-                "ContentHandler": "LISP1",
-                "ContentType": "FixedWidth",
-                "TrimWhiteSpace": true,
-                "CommentTokens": [ "!", "<#" ],
-                "Fields": [
-                    { "name": "Identity", "width": 30,"conversion": "int" },
-                    { "name": "Name", "width": 10,"conversion": "date" }
-                ]
-            }
-        ]
-    },
-    {
-        "FileType": "LISP 1 xls",
-        "ContentHandlers": [
-            {
-                "ContentHandler": "xls",
-                "SheetName": "Sheet1",
-                "HeaderLineNumber": "2",
-                "ContentLineNumber":  "4",
-                "Fields": [
-                    { "name": "Identity", "regex": "{Identity}" },
-                    { "name": "Name", "regex": "{Name}" }
-                ],
-                "DataEntryType": "LISP1"
+﻿{
+    "Folders": {
+        "LISP_1_CSV_Fixed": {
+            "BaseType": "System.New.BaseType",
+            "DefaultValue": {
+                "Date": "Regex:'/d{2}' | date"
             },
-            {
-                "ContentHandler": "xls",
-                "SheetName": "Sheet2",
-                "HeaderLineNumber": "2",
-                "ContentLineNumber":  "4",
-                "Fields": [
-                    { "name": "Identity", "regex": "{Identity}" },
-                    { "name": "Name", "regex": "{Name}" }
-                ],
-                "DataEntryType": "LISP1"
-            }
-        ]
+            "Content": [
+                {
+                    "ContentHandler": "LISP1",
+                    "ContentType": "FixedWidth",
+                    "FieldWidths": [ 3, 5, 6, 7, 8 ],
+                    "Fields": [
+                        { "name": "Identity", "regex": "{identity}", "conversion": "System.Int32" },
+                        { "name": "Name", "regex": "{name}", "conversion": "uppercase" },
+                        { "name": "Date Of Birth", "regex": "{dob}", "conversion": "date:ddMMyyy" }
+                        //| to split calls
+                        //: to split call and parameters
+                        //, to split parameters
+                    ]
+                }
+            ]
+        },
+        "LISP_1_xls": {
+            "Content": [
+                {
+                    "ContentHandler": "LISP1",
+                    "ContentType": "xls"
+                },
+                {
+                    "ContentHandler": "LISP2",
+                    "ContentType": "xls",
+                    "SheetName": "Sheet2",
+                    "HeaderLineNumber": 3,
+                    "Fields": [
+                        { "name": "Identity", "regex": "{identity}", "conversion": "int" },
+                        { "name": "Name", "regex": "{name}", "conversion": "First Last Uppercase" },
+                        { "name": "Age", "regex": "{age}", "conversion": "date:ddMMyyy" }
+                    ]
+                }
+            ]
+        },
+        "LISP2_excel": {
+            "Content": [
+                {
+                    "ContentHandler": "LISP2",
+                    "ContentType": "xlsx"
+                }
+            ]
+        },
+        "LISP2_fixed": {
+            "Content": [
+                {
+                    "ContentHandler": "LISP2",
+                    "ContentType": "FixedWidth",
+                    "FieldWidths": [ 20, 26, 50 ]
+                }
+            ]
+        }
+    },
+    "BaseDir": "",
+    "Tenants": {
+        "a": [ "LISP2_fixed", "LISP2_excel" ],
+        "b": [ "LISP1_fixed" ]
     }
-]
+}

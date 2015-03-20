@@ -116,8 +116,6 @@
     <Compile Include="FileWatcherService.Designer.cs">
       <DependentUpon>FileWatcherService.cs</DependentUpon>
     </Compile>
-    <Compile Include="FolderMonitor.cs" />
-    <Compile Include="FolderMonitorFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

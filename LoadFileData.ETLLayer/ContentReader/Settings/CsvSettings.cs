@@ -2,6 +2,10 @@
 {
     public class CsvSettings : ContentReaderSettings
     {
+        public CsvSettings()
+        {
+            
+        }
         public virtual string[] CommentTokens { set; get; }
         public virtual bool TrimWhiteSpace { set; get; }
         public virtual bool HasFieldsEnclosedInQuotes { get; set; }

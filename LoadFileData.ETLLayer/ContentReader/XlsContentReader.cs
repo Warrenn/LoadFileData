@@ -22,19 +22,7 @@ namespace LoadFileData.ETLLayer.ContentReader
             var sheetName = settings.SheetName;
             var sheetNumber = settings.SheetNumber;
 
-            try
-            {
-                Reader = ExcelReaderFactory.CreateBinaryReader(fileStream);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                //Known bug with excel reader sometimes will throw argument out of range exception http://exceldatareader.codeplex.com/discussions/431882
-                var contents = ((MemoryStream) (fileStream)).ToArray();
-                TempFileName = Path.GetTempFileName();
-                File.WriteAllBytes(TempFileName, contents);
-                TempFileStream = new FileStream(TempFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                Reader = ExcelReaderFactory.CreateBinaryReader(TempFileStream);
-            }
+            Reader = ExcelReaderFactory.CreateBinaryReader(fileStream);
             var dataSource = Reader.AsDataSet();
             if (dataSource.Tables.Count < 1)
             {

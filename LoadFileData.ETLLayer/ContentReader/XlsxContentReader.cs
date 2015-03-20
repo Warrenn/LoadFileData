@@ -13,7 +13,6 @@ namespace LoadFileData.ETLLayer.ContentReader
         protected string TempFileName = string.Empty;
         protected Stream TempFileStream;
 
-
         #region IContentReader Members
 
         public override IEnumerable<IEnumerable<object>> ReadRowData(Stream fileStream)

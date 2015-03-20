@@ -4,12 +4,11 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
-using LoadFileData.ETLLayer;
 using LoadFileData.ETLLayer.Constants;
 using LoadFileData.ETLLayer.FileHandler;
-using LoadFileData.FileWatcherService.Properties;
+using LoadFileData.ETLLayer.Properties;
 
-namespace LoadFileData.FileWatcherService
+namespace LoadFileData.ETLLayer.FolderMonitor
 {
     public class FolderMonitor : IDisposable
     {
@@ -64,36 +63,37 @@ namespace LoadFileData.FileWatcherService
             var fullPath = newFileEvent.EventArgs.FullPath;
 
             RetryScheduler.Schedule(0, TimeSpan.Zero, (state, recurse) =>
+            {
+                Stream stream;
+                try
                 {
-                    Stream stream;
-                    try
+                    stream = File.OpenRead(fullPath);
+                }
+                catch (Exception ex)
+                {
+                    Interlocked.Increment(ref state);
+                    if (state < RetryCount)
                     {
-                        stream = File.OpenRead(fullPath);
-                    }
-                    catch (Exception ex)
-                    {
-                        Interlocked.Increment(ref state);
-                        if (state < RetryCount)
-                        {
-                            recurse(state, Interval);
-                            return;
-                        }
-                        fileHandler.ReportError(fullPath, ex);
+                        recurse(state, Interval);
                         return;
                     }
-                    try
-                    {
-                        fileHandler.ProcessFile(fullPath, stream);
-                    }
-                    catch (Exception ex)
-                    {
-                        fileHandler.ReportError(fullPath, ex);
-                    }
-                    finally
-                    {
-                        stream.Dispose();
-                    }
-                });
+                    fileHandler.ReportError(fullPath, ex);
+                    return;
+                }
+                try
+                {
+                    fileHandler.ProcessFile(fullPath, stream);
+                }
+                catch (Exception ex)
+                {
+                    fileHandler.ReportError(fullPath, ex);
+                }
+                finally
+                {
+                    ExceptionHandler.Try(() => fileHandler.ProcessComplete(fullPath));
+                    stream.Dispose(PolicyName.Disposable);
+                }
+            });
         }
 
         internal virtual IScheduler RetryScheduler

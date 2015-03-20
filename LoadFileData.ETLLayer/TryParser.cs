@@ -3,7 +3,9 @@ using System.Collections.Concurrent;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reactive.Concurrency;
 using System.Reflection;
+using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
 namespace LoadFileData.ETLLayer
 {
@@ -13,6 +15,17 @@ namespace LoadFileData.ETLLayer
 
         private static readonly ConcurrentDictionary<Type, Lazy<Delegate>> TryParseMethods =
             new ConcurrentDictionary<Type, Lazy<Delegate>>();
+
+        private static readonly ConcurrentDictionary<Type,Lazy<MethodInfo>> NullableMethodInfos =
+            new ConcurrentDictionary<Type, Lazy<MethodInfo>>();
+
+        private static readonly MethodInfo NullableMethodInfo = typeof (TryParser)
+            .GetMethod(
+                "Nullable",
+                BindingFlags.Static | BindingFlags.Public,
+                null,
+                new[] {typeof (object)},
+                null);
 
         private static readonly string[] Formats =
         {
@@ -29,7 +42,7 @@ namespace LoadFileData.ETLLayer
             "yyyy-MM-dd hh:mm:ss tt",
             "yyyy-MM-dd HH:mm:ss",
             "yyyy-MM-ddTHH:mm:ss",
-            "o",
+            "o"
         };
 
         public static DateTime? DateTime(object value)
@@ -54,6 +67,14 @@ namespace LoadFileData.ETLLayer
                 (doubleValue >= -693593))
                 return date.AddDays(doubleValue);
             return null;
+        }
+
+        public static object Nullable(Type type, object value)
+        {
+            var lazy = NullableMethodInfos
+                .GetOrAdd(type, new Lazy<MethodInfo>(
+                    () => NullableMethodInfo.MakeGenericMethod(type)));
+            return lazy.Value.Invoke(null, new[] {value});
         }
 
         public static T? Nullable<T>(object value)
@@ -81,14 +102,13 @@ namespace LoadFileData.ETLLayer
             var assignment = Expression.Assign(Expression.MakeMemberAccess(fooParameter, propertyInfo), valueParameter);
             var assign = Expression.Lambda<Action<TClass, T>>(assignment, fooParameter, valueParameter);
             var assignFunction = assign.Compile();
-            var nullableInfo = typeof (TryParser).GetMethod("Nullable");
             Func<object, T> convertFunction = null;
             if (memberType.IsGenericType && memberType.GetGenericTypeDefinition() == typeof (Nullable<>))
             {
                 var genericParameter = memberType.GenericTypeArguments[0];
                 if (genericParameter != typeof (DateTime))
                 {
-                    var convertMethod = nullableInfo.MakeGenericMethod(genericParameter);
+                    var convertMethod = NullableMethodInfo.MakeGenericMethod(genericParameter);
                     convertFunction = o => (T) convertMethod.Invoke(null, new[] {o});
                 }
                 else
@@ -98,7 +118,7 @@ namespace LoadFileData.ETLLayer
             }
             if ((convertFunction == null) && memberType.IsValueType)
             {
-                var convertMethod = nullableInfo.MakeGenericMethod(memberType);
+                var convertMethod = NullableMethodInfo.MakeGenericMethod(memberType);
                 if (memberType != typeof (DateTime))
                 {
                     convertFunction = o => (T) (convertMethod.Invoke(null, new[] {o}) ?? default(T));
