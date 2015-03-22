@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
-using System.Web.UI;
-using LoadFileData.ETLLayer;
+using System.Reflection.Emit;
+using System.Text.RegularExpressions;
+using System.Threading;
+using LoadFileData.ContentReader;
 using LoadFileData.Tests.MockFactory;
-using Microsoft.Practices.ObjectBuilder2;
-using Microsoft.Practices.Unity;
+using Microsoft.VisualBasic.FileIO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+
 
 namespace LoadFileData.Tests.Controllers
 {
@@ -30,7 +32,7 @@ namespace LoadFileData.Tests.Controllers
             int TestResult(int input);
         }
 
-        public abstract class ServiceBase
+        public class ServiceBase
         {
             private readonly IService service;
             private readonly IService2 service2;
@@ -77,6 +79,87 @@ namespace LoadFileData.Tests.Controllers
             }
         }
 
+        public static void AddProperty<T>(TypeBuilder builder, string propertyName)
+        {
+            var propertyType = typeof (T);
+            AddProperty(builder, propertyType, propertyName);
+        }
+
+        public static void AddProperty(TypeBuilder builder, Type propertyType, string propertyName)
+        {
+            propertyName = char.ToUpperInvariant(propertyName[0]) + propertyName.Substring(1);
+            var fieldName = char.ToLowerInvariant(propertyName[0]) + propertyName.Substring(1);
+
+            var customerNameBldr = builder.DefineField(fieldName, propertyType, FieldAttributes.Private);
+
+            var custNamePropBldr = builder.DefineProperty(propertyName, PropertyAttributes.HasDefault,
+                propertyType, null);
+
+            const MethodAttributes getSetAttr =
+                MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig |
+                MethodAttributes.Virtual;
+
+            var custNameGetPropMthdBldr = builder.DefineMethod("get_" + propertyName, getSetAttr, propertyType,
+                Type.EmptyTypes);
+
+            var custNameGetIl = custNameGetPropMthdBldr.GetILGenerator();
+
+            custNameGetIl.Emit(OpCodes.Ldarg_0);
+            custNameGetIl.Emit(OpCodes.Ldfld, customerNameBldr);
+            custNameGetIl.Emit(OpCodes.Ret);
+
+            var custNameSetPropMthdBldr = builder.DefineMethod("set_" + propertyName, getSetAttr, null,
+                new[] { propertyType });
+
+
+            var custNameSetIl = custNameSetPropMthdBldr.GetILGenerator();
+
+            custNameSetIl.Emit(OpCodes.Ldarg_0);
+            custNameSetIl.Emit(OpCodes.Ldarg_1);
+            custNameSetIl.Emit(OpCodes.Stfld, customerNameBldr);
+            custNameSetIl.Emit(OpCodes.Ret);
+
+            custNamePropBldr.SetGetMethod(custNameGetPropMthdBldr);
+            custNamePropBldr.SetSetMethod(custNameSetPropMthdBldr);
+        }
+
+        public static TypeBuilder BuildDynamicTypeWithProperties(string typeName, Type baseTypes = null)
+        {
+            var myDomain = Thread.GetDomain();
+            var myAsmName = Assembly.GetExecutingAssembly().GetName();
+
+            var myAsmBuilder = myDomain.DefineDynamicAssembly(myAsmName, AssemblyBuilderAccess.RunAndSave);
+            var myModBuilder = myAsmBuilder.DefineDynamicModule(myAsmName.Name, myAsmName.Name + ".dll");
+
+            return  myModBuilder.DefineType(typeName, TypeAttributes.Public, baseTypes);
+        }
+
+        [TestMethod]
+        public void Test2()
+        {
+            var builder = BuildDynamicTypeWithProperties("ClassA");
+            AddProperty<string>(builder, "name");
+            AddProperty<int>(builder, "age");
+            var type = builder.CreateType();
+
+            var ins = Activator.CreateInstance(type);
+
+            var i = type.GetProperty("Name");
+            i.SetValue(ins, "A new Name");
+
+            var value = i.GetValue(ins);
+
+            Assert.AreEqual("A new Name", value);
+        }
+
+
+        [TestMethod]
+        public void Test3()
+        {
+            var fields = DelimiteredContentReader.Split("fun:'{a|b|c}' | data | fds:'j|kkl|y'");
+            
+            Assert.IsTrue(fields.Length > 0);
+        }
         [TestMethod]
         public void TestMethod1()
         {

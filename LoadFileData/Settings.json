@@ -1,0 +1,61 @@
+﻿{
+    "Folders": {
+        "LISP_1_CSV_Fixed": {
+            "DefaultValues": {
+                "Date": "Regex:'/d{2}' | date"
+            },
+            "ContentHandlers": {
+                "LISP1": {
+                    "ContentType": "FixedWidth",
+                    "FieldWidths": [ 3, 5, 6, 7, 8 ],
+                    "Fields": [
+                        { "name": "Identity", "regex": "{identity}", "conversion": "System.Int32" },
+                        { "name": "Name", "regex": "{name}", "conversion": "uppercase" },
+                        { "name": "Date Of Birth", "regex": "{dob}", "conversion": "date:ddMMyyy" }
+                        //| to split calls
+                        //: to split call and parameters
+                        //, to split parameters
+                }
+            }
+        },
+        "LISP_1_xls": {
+            "ContentHandlers": {
+                "LISP1": {
+                    "ContentType": "xls"
+                },
+                "LISP2": 
+                {
+                    "ContentType": "xls",
+                    "SheetName": "Sheet2",
+                    "HeaderLineNumber": 3,
+                    "Fields": [
+                        { "name": "Identity", "regex": "{identity}", "conversion": "int" },
+                        { "name": "Name", "regex": "{name}", "conversion": "First Last Uppercase" },
+                        { "name": "Age", "regex": "{age}", "conversion": "date:ddMMyyy" }
+                    ]
+                }
+            }
+        },
+        "LISP2_excel": {
+            "Content": [
+                {
+                    "ContentHandler": "LISP2",
+                    "ContentType": "xlsx"
+                }
+            ]
+        },
+        "LISP2_csv": {
+            "ContentHandlers": [
+                {
+                    "ContentHandler": "LISP2",
+                    "ContentType": "CSV",
+                }
+            ]
+        }
+    },
+        "BaseDir": "",
+        "Tenants": {
+            "a": [ "LISP2_fixed", "LISP2_excel" ],
+            "b": [ "LISP1_fixed" ]
+        }
+    }

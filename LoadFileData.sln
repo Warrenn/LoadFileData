@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData.DAL", "LoadFil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData.FileWatcherService", "LoadFileData.FileWatcherService\LoadFileData.FileWatcherService.csproj", "{EC050857-6DB8-4DD7-B445-6731CC1AB295}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData.ETLLayer", "LoadFileData.ETLLayer\LoadFileData.ETLLayer.csproj", "{696EF5B4-D5E9-4E27-ACA8-66224ADA3D8C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData", "LoadFileData\LoadFileData.csproj", "{696EF5B4-D5E9-4E27-ACA8-66224ADA3D8C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
