@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData.FileWatcherSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData", "LoadFileData\LoadFileData.csproj", "{696EF5B4-D5E9-4E27-ACA8-66224ADA3D8C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData.Web", "LoadFileData.Web\LoadFileData.Web.csproj", "{B1F86424-4C0B-4677-8C6E-03860B5139FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{696EF5B4-D5E9-4E27-ACA8-66224ADA3D8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{696EF5B4-D5E9-4E27-ACA8-66224ADA3D8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{696EF5B4-D5E9-4E27-ACA8-66224ADA3D8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1F86424-4C0B-4677-8C6E-03860B5139FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1F86424-4C0B-4677-8C6E-03860B5139FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1F86424-4C0B-4677-8C6E-03860B5139FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1F86424-4C0B-4677-8C6E-03860B5139FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

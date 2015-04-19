@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using LoadFileData.ContentReader.Settings;
 
@@ -9,12 +8,16 @@ namespace LoadFileData.ContentReader
 {
     public class DelimiteredContentReader : TextContentReader
     {
+        public static string[] Split(string line, params string[] delimiters)
+        {
+            return Split(line, delimiterStrings: delimiters);
+        }
 
         public static string[] Split(
             string line,
+            bool trim = true,
             string[] delimiterStrings = null,
-            string[] commentStrings = null,
-            bool trim = true)
+            string[] commentStrings = null)
         {
             var delimiters = ((delimiterStrings == null) || (delimiterStrings.Length == 0))
                 ? @"\|,"
@@ -34,7 +37,9 @@ namespace LoadFileData.ContentReader
         {
             var settings = (DelimitedSettings) Settings;
 
-            return ReadRowLine(fileStream).Select(line => Split(line, settings.Delimiters, settings.CommentStrings));
+            return
+                ReadRowLine(fileStream)
+                    .Select(line => Split(line, settings.RemoveWhiteSpace, settings.Delimiters, settings.CommentStrings));
         }
     }
 }

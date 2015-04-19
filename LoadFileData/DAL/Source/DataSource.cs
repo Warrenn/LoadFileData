@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LoadFileData.DAL.Entry;
 
 namespace LoadFileData.DAL.Source
 {
@@ -15,7 +16,7 @@ namespace LoadFileData.DAL.Source
         public virtual string CurrentFileName { get; set; }
         public virtual string HandlerName { get; set; }
         public virtual string MediaType { get; set; }
-        //public virtual ICollection<DataEntry> DataEntries { get; set; }
+        public virtual ICollection<DataEntry> DataEntries { get; set; }
 
         private Type NonProxyType()
         {

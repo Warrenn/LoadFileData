@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 using LoadFileData.DAL.Source;
 
 namespace LoadFileData.WCF.Source
@@ -13,9 +8,18 @@ namespace LoadFileData.WCF.Source
     public class DataSourceMessageContract
     {
         [MessageHeader(MustUnderstand = true)]
-        public DataSource Source { get; set; }
+        public string UserName { get; set; }
 
-        [MessageBodyMember(Order = 1)] 
+        [MessageHeader(MustUnderstand = true)]
+        public string OriginalFileName { get; set; }
+
+        [MessageHeader(MustUnderstand = true)]
+        public virtual string HandlerName { get; set; }
+
+        [MessageHeader(MustUnderstand = true)]
+        public virtual string MediaType { get; set; }
+
+        [MessageBodyMember(Order = 1)]
         public Stream FileByteStream;
     }
 }

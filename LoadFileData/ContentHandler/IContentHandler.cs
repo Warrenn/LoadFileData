@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using LoadFileData.DAL.Entry;
 
 namespace LoadFileData.ContentHandler
 {
     public interface IContentHandler
     {
-        void ProcessRowData(IDictionary<string, object> rowData);
+        IEnumerable<DataEntry> ProcessRowData(IDictionary<string, object> rowData);
     }
 }
