@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace LoadFileData.ContentReader
 {
-    public interface IContentReader : IDisposable
+    public interface IContentReader
     {
-        IEnumerable<IDictionary<string, object>> RowData(Stream fileStream);
+        IEnumerable<IEnumerable<object>> ReadContent(Stream fileStream);
     }
 }

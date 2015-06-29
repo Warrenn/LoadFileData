@@ -21,22 +21,20 @@ namespace LoadFileData.FileWatcherService
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            Ex
-            try
-            {
-                var container = Bootstrapper.Container;
-                var mainService = container.Resolve<FileWatcherService>();
-                var servicesToRun = new ServiceBase[] { mainService };
-                ServiceBase.Run(servicesToRun);
-            }
-            catch (Exception ex)
-            {
-                ExceptionPolicy.HandleException(ex, PolicyName.Default);
-            }
-            var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser("");
-            parser.TextFieldType = FieldType.Delimited;
-            parser.TrimWhiteSpace
-            parser.
+            //try
+            //{
+            //    var container = Bootstrapper.Container;
+            //    var mainService = container.Resolve<FileWatcherService>();
+            //    var servicesToRun = new ServiceBase[] { mainService };
+            //    ServiceBase.Run(servicesToRun);
+            //}
+            //catch (Exception ex)
+            //{
+            //    ExceptionPolicy.HandleException(ex, PolicyName.Default);
+            //}
+            //var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser("");
+            //parser.TextFieldType = FieldType.Delimited;
+            //parser.TrimWhiteSpace
 
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[] 

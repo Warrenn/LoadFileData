@@ -156,7 +156,7 @@ namespace LoadFileData.Tests.Controllers
         [TestMethod]
         public void Test3()
         {
-            var fields = DelimiteredContentReader.Split("fun:'{a|b|c}' | data | fds:'j|kkl|y'");
+            var fields = DelimiteredReader.Split("fun:'{a|b|c}' | data | fds:'j|kkl|y'");
             
             Assert.IsTrue(fields.Length > 0);
         }

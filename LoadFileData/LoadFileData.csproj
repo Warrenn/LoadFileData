@@ -98,19 +98,20 @@
   <ItemGroup>
     <Compile Include="AssemblyHelper.cs" />
     <Compile Include="Constants\PolicyName.cs" />
-    <Compile Include="ContentHandler\ContentProcess.cs" />
-    <Compile Include="ContentHandler\IContentHandler.cs" />
-    <Compile Include="ContentReader\ContentReaderBase.cs">
+    <Compile Include="ContentHandler\ContentMapperContext.cs" />
+    <Compile Include="ContentHandler\FixedIndexContentMapper.cs" />
+    <Compile Include="ContentHandler\Settings\FixedIndexSettings.cs" />
+    <Compile Include="ContentReader\DelimiteredReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContentReader\DelimiteredContentReader.cs">
+    <Compile Include="ContentReader\FixedWidthReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContentReader\FixedWidthContentReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="ContentReader\Settings\ExcelRange.cs" />
+    <Compile Include="ContentReader\Settings\ExcelRangeFactory.cs" />
+    <Compile Include="ContentReader\Settings\ExcelSettings.cs" />
     <Compile Include="ContentReader\Settings\TextReaderSettings.cs" />
-    <Compile Include="ContentReader\TextContentReader.cs" />
+    <Compile Include="ContentReader\TextReaderBase.cs" />
     <Compile Include="ContentReader\XlsContentReader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -125,6 +126,7 @@
     <Compile Include="DAL\Entry\DataError.cs" />
     <Compile Include="DAL\Entry\DataErrorType.cs" />
     <Compile Include="DataEntryTransform\IDataEntryTransform.cs" />
+    <Compile Include="ContentHandler\IContentMapper.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -135,16 +137,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ContentReader\Settings\ContentReaderSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ContentReader\Settings\DelimitedSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentReader\Settings\ExcelSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentReader\Settings\FieldSettings.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ContentReader\Settings\FixedWidthSettings.cs">
@@ -154,6 +147,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DAL\Source\DataSource.cs" />
+    <Compile Include="Transform\ITransformer.cs" />
     <Compile Include="WCF\DataSourceService.cs" />
     <Compile Include="WCF\DataSourceServiceResx.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -174,7 +168,6 @@
     <Compile Include="DAL\Source\SourceStatus.cs" />
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ContentReader\Settings\FolderSettings.cs" />
     <Compile Include="TryParser.cs" />
   </ItemGroup>
   <ItemGroup>

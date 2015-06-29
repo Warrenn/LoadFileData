@@ -53,8 +53,6 @@ namespace LoadFileData.FileWatcherService
 
         private static void RegisterTypes(IUnityContainer container)
         {
-            HandlerFactory.RegisterHandlers(container);
-            FolderMonitorFactory.RegisterFolderMonitor(container);
             container.RegisterType<ServiceBase, FileWatcherService>(new HierarchicalLifetimeManager());
         }
     }

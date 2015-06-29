@@ -1,8 +1,8 @@
 ﻿namespace LoadFileData.ContentReader.Settings
 {
-    public class ExcelSettings : ContentReaderSettings
+    public class ExcelSettings
     {
-        public virtual string SheetName { get; set; }
-        public virtual int SheetNumber { get; set; }
+        public ExcelRange Range { get; set; }
+        public string Sheet { get; set; }
     }
 }

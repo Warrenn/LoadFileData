@@ -1,6 +1,6 @@
 ﻿namespace LoadFileData.ContentReader.Settings
 {
-    public class TextReaderSettings : ContentReaderSettings
+    public class TextReaderSettings
     {
         public TextReaderSettings()
         {

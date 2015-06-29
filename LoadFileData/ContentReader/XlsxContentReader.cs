@@ -1,60 +1,70 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using LoadFileData.Constants;
 using LoadFileData.ContentReader.Settings;
 using OfficeOpenXml;
 
 namespace LoadFileData.ContentReader
 {
-    public class XlsxContentReader : ContentReaderBase
+    public class XlsxContentReader : IContentReader
     {
-        protected ExcelPackage Package;
-        protected ExcelWorkbook Workbook;
-        protected string TempFileName = string.Empty;
-        protected Stream TempFileStream;
+        private readonly ExcelSettings settings;
 
-        #region IContentReader Members
-
-        public override IEnumerable<IEnumerable<object>> ReadRowData(Stream fileStream)
+        public XlsxContentReader(ExcelSettings settings)
         {
-            var settings = (ExcelSettings)Settings;
-            var sheetName = settings.SheetName;
-            var sheetNumber = settings.SheetNumber;
+            this.settings = settings;
+        }
 
-            Package = new ExcelPackage(fileStream);
-            Workbook = Package.Workbook;
+        public IEnumerable<IEnumerable<object>> ReadContent(Stream fileStream)
+        {
+            var package = new ExcelPackage(fileStream);
+            var workbook = package.Workbook;
 
-            sheetNumber = ((sheetNumber > 0) && (sheetNumber <= Workbook.Worksheets.Count)) ? sheetNumber : 1;
-            var worksheet = (string.IsNullOrEmpty(sheetName))
-                ? Workbook.Worksheets[sheetNumber]
-                : Workbook.Worksheets[sheetName];
+            if (workbook.Worksheets.Count < 1)
+            {
+                yield break;
+            }
+            var sheetName = settings.Sheet;
+            var worksheet = workbook.Worksheets[sheetName];
+
+            int sheetNumber;
+            if ((worksheet == null) &&
+                (int.TryParse(sheetName, out sheetNumber)) &&
+                (sheetNumber > 0) &&
+                (sheetNumber <= workbook.Worksheets.Count))
+            {
+                worksheet = workbook.Worksheets[sheetNumber];
+            }
+
+            if (worksheet == null)
+            {
+                worksheet = workbook.Worksheets[1];
+            }
+
+            var range = settings.Range;
             var dimension = worksheet.Dimension;
-            if (dimension.Rows < 1)
+
+            var rowStartNo = range.RowStart;
+            var colStartNo = range.ColumnStart;
+            var rowEndNo = range.RowEnd ?? dimension.Rows;
+            var colEndNo = range.ColumnEnd ?? dimension.Columns;
+            if (colStartNo > colEndNo)
+            {
+                yield break;
+            }
+            if (rowStartNo > rowEndNo)
             {
                 yield break;
             }
 
-            for (var rowNumber = 1; rowNumber <= dimension.Rows; rowNumber++)
+            for (var rowNo = rowStartNo; rowNo <= rowEndNo; rowNo++)
             {
                 var rowValues = new List<object>();
-                for (var columnNumber = 1; columnNumber <= dimension.Columns; columnNumber++)
+                for (var colNo = colStartNo; colNo <= colEndNo; colNo++)
                 {
-                    rowValues.Add(worksheet.Cells[rowNumber, columnNumber]);
+                    rowValues.Add(worksheet.Cells[rowNo, colNo]);
                 }
                 yield return rowValues;
             }
-
         }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public override void Dispose()
-        {
-            Package.Dispose(PolicyName.Disposable);
-        }
-
-        #endregion    
     }
 }

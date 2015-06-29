@@ -41,7 +41,7 @@ namespace LoadFileData.FileWatcherService.FileHandler
             var message = new DataSourceMessageContract
             {
                 FileByteStream = stream,
-                Source = source
+                //Source = source
             };
             dataSource.CreateDataSource(message);
         }

@@ -100,7 +100,7 @@ namespace LoadFileData.WCF
             foreach (var contentHandler in contentHandlers)
             {
                 var rowNumber = 1;
-                foreach (var rowData in contentHandler.Reader.RowData(stream))
+                foreach (var rowData in contentHandler.Reader.ReadContent(stream))
                 {
                     foreach (var rowEntry in contentHandler.Handler.ProcessRowData(rowData).Where(e => e != null))
                     {
