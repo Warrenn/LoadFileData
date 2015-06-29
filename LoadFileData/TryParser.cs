@@ -14,15 +14,26 @@ namespace LoadFileData
         private static readonly ConcurrentDictionary<Type, Lazy<Delegate>> TryParseMethods =
             new ConcurrentDictionary<Type, Lazy<Delegate>>();
 
-        private static readonly ConcurrentDictionary<Type,Lazy<MethodInfo>> NullableMethodInfos =
+        private static readonly ConcurrentDictionary<Type, Lazy<MethodInfo>> NullableMethodInfos =
             new ConcurrentDictionary<Type, Lazy<MethodInfo>>();
 
-        private static readonly MethodInfo NullableMethodInfo = typeof (TryParser)
+        private static readonly ConcurrentDictionary<Type, Lazy<MethodInfo>> DefaultMethodInfos =
+            new ConcurrentDictionary<Type, Lazy<MethodInfo>>();
+
+        private static readonly MethodInfo NullableMethodInfo = typeof(TryParser)
             .GetMethod(
                 "Nullable",
                 BindingFlags.Static | BindingFlags.Public,
                 null,
-                new[] {typeof (object)},
+                new[] { typeof(object) },
+                null);
+
+        private static readonly MethodInfo DefaultMethodInfo = typeof(TryParser)
+            .GetMethod(
+                "Default",
+                BindingFlags.Static | BindingFlags.Public,
+                null,
+                new[] { typeof(object) },
                 null);
 
         private static readonly string[] Formats =
@@ -43,19 +54,31 @@ namespace LoadFileData
             "o"
         };
 
-        public static DateTime? DateTime(object value)
+        public static DateTime? DateTime(object value, string[] formats = null)
         {
-            if (value is DateTime) return (DateTime?) value;
+            if (value is DateTime)
+            {
+                return (DateTime?)value;
+            }
             var stringValue = string.Format("{0}", value);
-            if (string.IsNullOrEmpty(stringValue)) return null;
+            if (string.IsNullOrEmpty(stringValue))
+            {
+                return null;
+            }
+            if (formats == null)
+            {
+                formats = Formats;
+            }
 
             DateTime date;
 
             if (System.DateTime.TryParseExact(
-                stringValue, Formats,
+                stringValue, formats,
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None, out date))
+            {
                 return date;
+            }
 
             date = new DateTime(1899, 12, 30);
 
@@ -63,7 +86,9 @@ namespace LoadFileData
             if (double.TryParse(stringValue, out doubleValue) &&
                 (doubleValue <= 2958465) &&
                 (doubleValue >= -693593))
+            {
                 return date.AddDays(doubleValue);
+            }
             return null;
         }
 
@@ -72,19 +97,43 @@ namespace LoadFileData
             var lazy = NullableMethodInfos
                 .GetOrAdd(type, new Lazy<MethodInfo>(
                     () => NullableMethodInfo.MakeGenericMethod(type)));
-            return lazy.Value.Invoke(null, new[] {value});
+            return lazy.Value.Invoke(null, new[] { value });
         }
 
         public static T? Nullable<T>(object value)
             where T : struct
         {
-            if (value is T) return (T) value;
+            if (value is T)
+            {
+                return (T)value;
+            }
             var stringValue = string.Format("{0}", value);
-            if (string.IsNullOrEmpty(stringValue)) return null;
+            if (string.IsNullOrEmpty(stringValue))
+            {
+                return null;
+            }
             T returnvalue;
             var tryParse = GetDelegate<T>(TryParseMethods);
-            if ((tryParse != null) && (tryParse(stringValue, out returnvalue))) return returnvalue;
+            if ((tryParse != null) && (tryParse(stringValue, out returnvalue)))
+            {
+                return returnvalue;
+            }
             return null;
+        }
+
+        public static object Default(Type type, object value)
+        {
+            var lazy = DefaultMethodInfos
+                .GetOrAdd(type, new Lazy<MethodInfo>(
+                    () => DefaultMethodInfo.MakeGenericMethod(type)));
+            return lazy.Value.Invoke(null, new[] { value });
+        }
+
+        public static T Default<T>(object value)
+            where T : struct
+        {
+            var nullable = Nullable<T>(value) ?? default(T);
+            return nullable;
         }
 
         public static Action<TClass, object> CreateAssignmentAction<TClass, T>(
@@ -92,43 +141,46 @@ namespace LoadFileData
             where TClass : class
         {
             var memberExpression = memberAssignment.Body as MemberExpression;
-            if (memberExpression == null) throw new ArgumentException("Expression body must be a MemberExpression");
-            var memberType = typeof (T);
-            var fooParameter = Expression.Parameter(typeof (TClass));
-            var valueParameter = Expression.Parameter(typeof (T));
-            var propertyInfo = typeof (TClass).GetProperty(memberExpression.Member.Name);
+            if (memberExpression == null)
+            {
+                throw new ArgumentException("Expression body must be a MemberExpression");
+            }
+            var memberType = typeof(T);
+            var fooParameter = Expression.Parameter(typeof(TClass));
+            var valueParameter = Expression.Parameter(typeof(T));
+            var propertyInfo = typeof(TClass).GetProperty(memberExpression.Member.Name);
             var assignment = Expression.Assign(Expression.MakeMemberAccess(fooParameter, propertyInfo), valueParameter);
             var assign = Expression.Lambda<Action<TClass, T>>(assignment, fooParameter, valueParameter);
             var assignFunction = assign.Compile();
             Func<object, T> convertFunction = null;
-            if (memberType.IsGenericType && memberType.GetGenericTypeDefinition() == typeof (Nullable<>))
+            if (memberType.IsGenericType && memberType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 var genericParameter = memberType.GenericTypeArguments[0];
-                if (genericParameter != typeof (DateTime))
+                if (genericParameter != typeof(DateTime))
                 {
                     var convertMethod = NullableMethodInfo.MakeGenericMethod(genericParameter);
-                    convertFunction = o => (T) convertMethod.Invoke(null, new[] {o});
+                    convertFunction = o => (T)convertMethod.Invoke(null, new[] { o });
                 }
                 else
                 {
-                    convertFunction = o => (T) ((object) DateTime(o));
+                    convertFunction = o => (T)((object)DateTime(o));
                 }
             }
             if ((convertFunction == null) && memberType.IsValueType)
             {
                 var convertMethod = NullableMethodInfo.MakeGenericMethod(memberType);
-                if (memberType != typeof (DateTime))
+                if (memberType != typeof(DateTime))
                 {
-                    convertFunction = o => (T) (convertMethod.Invoke(null, new[] {o}) ?? default(T));
+                    convertFunction = o => (T)(convertMethod.Invoke(null, new[] { o }) ?? default(T));
                 }
                 else
                 {
-                    convertFunction = o => (T) ((object) DateTime(o) ?? default(T));
+                    convertFunction = o => (T)((object)DateTime(o) ?? default(T));
                 }
             }
             if (convertFunction == null)
             {
-                convertFunction = o => (T) o;
+                convertFunction = o => (T)o;
             }
 
             Action<TClass, object> complete = (foo, o) =>
@@ -142,9 +194,12 @@ namespace LoadFileData
         private static TryParseDelegate<T> GetDelegate<T>(ConcurrentDictionary<Type, Lazy<Delegate>> dictionary)
             where T : struct
         {
-            var type = typeof (T);
+            var type = typeof(T);
 
-            if (type.IsEnum) return Enum.TryParse<T>;
+            if (type.IsEnum)
+            {
+                return Enum.TryParse<T>;
+            }
 
             var lazy = dictionary
                 .GetOrAdd(type, new Lazy<Delegate>(() =>
@@ -155,14 +210,17 @@ namespace LoadFileData
                                 .FirstOrDefault(m =>
                                                 (m.Name == "TryParse") &&
                                                 (m.GetParameters().Count() == 2) &&
-                                                (m.GetParameters()[0].ParameterType == typeof (string)) &&
+                                                (m.GetParameters()[0].ParameterType == typeof(string)) &&
                                                 (m.GetParameters()[1].IsOut));
-                        if (method == null) return null;
+                        if (method == null)
+                        {
+                            return null;
+                        }
                         var returnValue =
-                            Delegate.CreateDelegate(typeof (TryParseDelegate<T>), method);
+                            Delegate.CreateDelegate(typeof(TryParseDelegate<T>), method);
                         return returnValue;
                     }));
-            return (TryParseDelegate<T>) lazy.Value;
+            return (TryParseDelegate<T>)lazy.Value;
         }
     }
 }
