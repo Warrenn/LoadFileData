@@ -98,9 +98,16 @@
   <ItemGroup>
     <Compile Include="AssemblyHelper.cs" />
     <Compile Include="Constants\PolicyName.cs" />
-    <Compile Include="ContentHandler\ContentMapperContext.cs" />
-    <Compile Include="ContentHandler\FixedIndexContentMapper.cs" />
+    <Compile Include="ContentHandler\ContentHandlerBase.cs" />
+    <Compile Include="ContentHandler\ContentHandlerContext.cs" />
+    <Compile Include="ContentHandler\FixedIndexContentHandler.cs" />
+    <Compile Include="ContentHandler\RegexContentHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContentHandler\Settings\ContentHandlerSettings.cs" />
+    <Compile Include="ContentHandler\Settings\FieldConversionFactory.cs" />
     <Compile Include="ContentHandler\Settings\FixedIndexSettings.cs" />
+    <Compile Include="ContentHandler\Settings\RegexSettings.cs" />
     <Compile Include="ContentReader\DelimiteredReader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -125,8 +132,7 @@
     <Compile Include="DAL\Source\IDataService.cs" />
     <Compile Include="DAL\Entry\DataError.cs" />
     <Compile Include="DAL\Entry\DataErrorType.cs" />
-    <Compile Include="DataEntryTransform\IDataEntryTransform.cs" />
-    <Compile Include="ContentHandler\IContentMapper.cs" />
+    <Compile Include="ContentHandler\IContentHandler.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -147,14 +153,16 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DAL\Source\DataSource.cs" />
-    <Compile Include="Transform\ITransformer.cs" />
+    <Compile Include="Transformer\ITransformer.cs" />
+    <Compile Include="Transformer\TransFormActivity.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="WCF\DataSourceService.cs" />
     <Compile Include="WCF\DataSourceServiceResx.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DataSourceServiceResx.resx</DependentUpon>
     </Compile>
-    <Compile Include="DataEntryTransform\IDataEntryTransformFactory.cs" />
     <Compile Include="WCF\Entry\DataEntryErrorDataContract.cs" />
     <Compile Include="WCF\Entry\DataEntryUpsertResultDataContract.cs" />
     <Compile Include="WCF\Entry\IDataErrorService.cs" />

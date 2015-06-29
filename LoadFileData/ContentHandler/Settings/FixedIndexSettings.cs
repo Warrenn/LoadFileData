@@ -4,15 +4,17 @@ using System.Linq;
 
 namespace LoadFileData.ContentHandler.Settings
 {
-    public class FixedIndexSettings<T>
+    public class FixedIndexSettings<T> : ContentHandlerSettings<T>
     {
         public FixedIndexSettings()
         {
+            var index = -1;
+            FieldIndices = typeof (T)
+                .GetFields()
+                .ToDictionary(f => index++, f => f.Name);
             ContentLineNumber = 1;
-            FieldIndex = new List<string>(typeof (T).GetFields().Select(f => f.Name));
         }
-        public IDictionary<string, Func<T, IDictionary<string, object>, T>> FieldConversion { get; set; }
-        public IList<string> FieldIndex { get; set; }
-        public int ContentLineNumber { get; set; }
+
+        public IDictionary<int, string> FieldIndices { get; set; }
     }
 }
