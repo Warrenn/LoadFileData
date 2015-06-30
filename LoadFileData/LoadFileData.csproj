@@ -125,13 +125,7 @@
     <Compile Include="ContentReader\XlsxContentReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Conversion.cs" />
     <Compile Include="DAL\Entry\DataEntry.cs" />
-    <Compile Include="DAL\Entry\IDataEntryService.cs" />
-    <Compile Include="DAL\Entry\IDataEntryServiceFactory.cs" />
-    <Compile Include="DAL\Source\IDataService.cs" />
-    <Compile Include="DAL\Entry\DataError.cs" />
-    <Compile Include="DAL\Entry\DataErrorType.cs" />
     <Compile Include="ContentHandler\IContentHandler.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -153,24 +147,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DAL\Source\DataSource.cs" />
-    <Compile Include="Transformer\ITransformer.cs" />
-    <Compile Include="Transformer\TransFormActivity.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WCF\DataSourceService.cs" />
-    <Compile Include="WCF\DataSourceServiceResx.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DataSourceServiceResx.resx</DependentUpon>
-    </Compile>
-    <Compile Include="WCF\Entry\DataEntryErrorDataContract.cs" />
-    <Compile Include="WCF\Entry\DataEntryUpsertResultDataContract.cs" />
-    <Compile Include="WCF\Entry\IDataErrorService.cs" />
-    <Compile Include="WCF\IEmailManager.cs" />
-    <Compile Include="WCF\IStreamManager.cs" />
-    <Compile Include="WCF\Source\DataSourceMessageContract.cs" />
-    <Compile Include="WCF\Source\IDataSourceServiceFactory.cs" />
-    <Compile Include="WCF\Source\IDataSourceService.cs" />
     <Compile Include="DAL\Source\SourceError.cs" />
     <Compile Include="DAL\Source\SourceErrorType.cs" />
     <Compile Include="DAL\Source\SourceStatus.cs" />
@@ -195,11 +171,6 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WCF\DataSourceServiceResx.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>DataSourceServiceResx.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

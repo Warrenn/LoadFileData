@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using LoadFileData.ContentHandler.Settings;
 
 namespace LoadFileData.ContentHandler

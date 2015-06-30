@@ -8,13 +8,11 @@ namespace LoadFileData.DAL.Entry
 {
     public class DataEntry
     {
-        public virtual Guid Id { get; set; }
-        public virtual DateTime EditDate { get; set; }
+        public Guid Id { get; set; }
+        public DateTime EditDate { get; set; }
         public virtual DataSource Source { get; set; }
         public virtual Guid SourceId { get; set; }
-        public virtual string UserName { get; set; }
-        public virtual int? RowNo { get; set; }
-        public virtual ICollection<DataError> Errors { get; set; }
+        public int? RowNo { get; set; }
 
         public virtual string EntryType
         {
