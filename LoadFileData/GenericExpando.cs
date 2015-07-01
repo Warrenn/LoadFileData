@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace LoadFileData
 {
     public class GenericExpando : DynamicObject
     {
-        private readonly object instance = null;
-        private readonly Type staticType = null;
+        private readonly object instance;
+        private readonly Type staticType;
+
+        private static readonly ConcurrentDictionary<string, Lazy<MethodInfo>> MethodInfos =
+            new ConcurrentDictionary<string, Lazy<MethodInfo>>();
+
+        public const BindingFlags StaticFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase;
+
+        public const BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase;
 
         public GenericExpando(Type staticType)
         {
@@ -60,7 +62,7 @@ namespace LoadFileData
             }
             if (staticType != null)
             {
-                result = GenericHelper.InvokeStatic(
+                result = InvokeStatic(
                     binder.Name,
                     staticType,
                     genericTypes,
@@ -72,12 +74,54 @@ namespace LoadFileData
                 return false;
             }
 
-            result = GenericHelper.InvokeInstance(
+            result = InvokeInstance(
                 binder.Name,
                 instance,
                 genericTypes,
                 callingArgs);
             return true;
         }
+
+        private static object Invoke(
+            string methodName,
+            object instance,
+            Type callingType,
+            Type[] genericTypes,
+            object[] arguments)
+        {
+            var argumentTypes = arguments.Select(a => a.GetType()).ToArray();
+            var flags = (instance == null) ? StaticFlags : InstanceFlags;
+            var methodInfo = MethodInfo(methodName, callingType, flags, argumentTypes);
+            if (methodInfo == null)
+            {
+                throw new MissingMethodException(callingType.FullName, methodName);
+            }
+            var generic = methodInfo.MakeGenericMethod(genericTypes);
+            return generic.Invoke(instance, arguments);
+        }
+
+        public static MethodInfo MethodInfo(string methodName, Type callingType, BindingFlags flags,
+            Type[] argumentTypes)
+        {
+            var key = string.Format("{0}.{1}", callingType.GUID, methodName);
+            var lazy = MethodInfos
+                .GetOrAdd(key, new Lazy<MethodInfo>(
+                    () => callingType.GetMethod(methodName, flags, null, argumentTypes, null)));
+            var methodInfo = lazy.Value;
+            return methodInfo;
+        }
+
+        public static object InvokeStatic(string methodName, Type staticType, Type[] genericTypes,
+            params object[] arguments)
+        {
+            return Invoke(methodName, null, staticType, genericTypes, arguments);
+        }
+
+        public static object InvokeInstance(string methodName, object instance, Type[] genericTypes,
+            params object[] arguments)
+        {
+            return (instance == null) ? null : Invoke(methodName, instance, instance.GetType(), genericTypes, arguments);
+        }
+
     }
 }

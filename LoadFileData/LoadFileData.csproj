@@ -132,7 +132,6 @@
     <Compile Include="DAL\Entry\DataEntry.cs" />
     <Compile Include="ContentHandler\IContentHandler.cs" />
     <Compile Include="GenericExpando.cs" />
-    <Compile Include="GenericHelper.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
