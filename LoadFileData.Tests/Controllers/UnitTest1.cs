@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -81,7 +82,7 @@ namespace LoadFileData.Tests.Controllers
 
         public static void AddProperty<T>(TypeBuilder builder, string propertyName)
         {
-            var propertyType = typeof (T);
+            var propertyType = typeof(T);
             AddProperty(builder, propertyType, propertyName);
         }
 
@@ -131,7 +132,7 @@ namespace LoadFileData.Tests.Controllers
             var myAsmBuilder = myDomain.DefineDynamicAssembly(myAsmName, AssemblyBuilderAccess.RunAndSave);
             var myModBuilder = myAsmBuilder.DefineDynamicModule(myAsmName.Name, myAsmName.Name + ".dll");
 
-            return  myModBuilder.DefineType(typeName, TypeAttributes.Public, baseTypes);
+            return myModBuilder.DefineType(typeName, TypeAttributes.Public, baseTypes);
         }
 
         [TestMethod]
@@ -157,9 +158,18 @@ namespace LoadFileData.Tests.Controllers
         public void Test3()
         {
             var fields = DelimiteredReader.Split("fun:'{a|b|c}' | data | fds:'j|kkl|y'");
-            
+
             Assert.IsTrue(fields.Length > 0);
         }
+
+        [TestMethod]
+        public void Testttt()
+        {
+            dynamic proxy = new GenericExpando(typeof(TryParser));
+            var datetime = proxy.Default(typeof (DateTime), "19oo-01-01");
+            Assert.AreEqual(new DateTime(1900, 1, 1), datetime);
+        }
+
         [TestMethod]
         public void TestMethod1()
         {

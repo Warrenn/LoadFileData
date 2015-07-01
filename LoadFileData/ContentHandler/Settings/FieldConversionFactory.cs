@@ -25,12 +25,20 @@ namespace LoadFileData.ContentHandler.Settings
 
         public static IDictionary<string, Action<T, object>> CreateDefault<T>()
         {
-            return Create<T>(TryParser.Default);
+            Func<Type, object, object> func = (t, o) => GenericHelper.InvokeStatic(
+                "Default",
+                typeof (TryParser),
+                new[] {t}, o);
+            return Create<T>(func);
         }
 
         public static IDictionary<string, Action<T, object>> CreateNullable<T>()
         {
-            return Create<T>(TryParser.Nullable);
+            Func<Type, object, object> func = (t, o) => GenericHelper.InvokeStatic(
+                "Nullable",
+                typeof(TryParser),
+                new[] { t }, o);
+            return Create<T>(func);
         }
     }
 }
