@@ -118,10 +118,10 @@
     <Compile Include="ContentReader\FixedWidthReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DAL\Settings\ExcelRange.cs" />
-    <Compile Include="DAL\Settings\ExcelRangeFactory.cs" />
-    <Compile Include="DAL\Settings\ExcelSettings.cs" />
-    <Compile Include="DAL\Settings\TextReaderSettings.cs" />
+    <Compile Include="ContentReader\Settings\ExcelRange.cs" />
+    <Compile Include="ContentReader\Settings\ExcelRangeFactory.cs" />
+    <Compile Include="ContentReader\Settings\ExcelSettings.cs" />
+    <Compile Include="ContentReader\Settings\TextReaderSettings.cs" />
     <Compile Include="ContentReader\TextReaderBase.cs" />
     <Compile Include="ContentReader\XlsContentReader.cs">
       <SubType>Code</SubType>
@@ -129,9 +129,10 @@
     <Compile Include="ContentReader\XlsxContentReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DAL\Entry\DataEntry.cs" />
     <Compile Include="ContentHandler\IContentHandler.cs" />
-    <Compile Include="GenericExpando.cs" />
+    <Compile Include="FileHandler\FolderMonitor.cs" />
+    <Compile Include="FileHandler\IFileHandler.cs" />
+    <Compile Include="GenericInvoker.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -142,19 +143,15 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="DAL\Settings\DelimitedSettings.cs">
+    <Compile Include="ContentReader\Settings\DelimitedSettings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DAL\Settings\FixedWidthSettings.cs">
+    <Compile Include="ContentReader\Settings\FixedWidthSettings.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ContentReader\IContentReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DAL\Source\DataSource.cs" />
-    <Compile Include="DAL\Source\SourceError.cs" />
-    <Compile Include="DAL\Source\SourceErrorType.cs" />
-    <Compile Include="DAL\Source\SourceStatus.cs" />
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TryParser.cs" />

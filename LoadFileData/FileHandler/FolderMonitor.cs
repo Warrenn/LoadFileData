@@ -5,11 +5,10 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using LoadFileData.Constants;
-using LoadFileData.FileWatcherService.FileHandler;
 using LoadFileData.Properties;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 
-namespace LoadFileData.FileWatcherService
+namespace LoadFileData.FileHandler
 {
     public class FolderMonitor : IDisposable
     {

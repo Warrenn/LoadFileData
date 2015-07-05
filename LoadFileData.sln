@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData.Tests", "LoadFileData.Tests\LoadFileData.Tests.csproj", "{74AF878F-B0CC-45DA-86E9-D1B990ACA8A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData.FileWatcherService", "LoadFileData.FileWatcherService\LoadFileData.FileWatcherService.csproj", "{EC050857-6DB8-4DD7-B445-6731CC1AB295}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData", "LoadFileData\LoadFileData.csproj", "{696EF5B4-D5E9-4E27-ACA8-66224ADA3D8C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData.Web", "LoadFileData.Web\LoadFileData.Web.csproj", "{B1F86424-4C0B-4677-8C6E-03860B5139FF}"
@@ -21,10 +19,6 @@ Global
 		{74AF878F-B0CC-45DA-86E9-D1B990ACA8A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74AF878F-B0CC-45DA-86E9-D1B990ACA8A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74AF878F-B0CC-45DA-86E9-D1B990ACA8A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC050857-6DB8-4DD7-B445-6731CC1AB295}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC050857-6DB8-4DD7-B445-6731CC1AB295}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC050857-6DB8-4DD7-B445-6731CC1AB295}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC050857-6DB8-4DD7-B445-6731CC1AB295}.Release|Any CPU.Build.0 = Release|Any CPU
 		{696EF5B4-D5E9-4E27-ACA8-66224ADA3D8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{696EF5B4-D5E9-4E27-ACA8-66224ADA3D8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{696EF5B4-D5E9-4E27-ACA8-66224ADA3D8C}.Release|Any CPU.ActiveCfg = Release|Any CPU

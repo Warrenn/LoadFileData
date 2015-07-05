@@ -25,7 +25,7 @@ namespace LoadFileData.ContentHandler.Settings
 
         public static IDictionary<string, Action<T, object>> CreateDefault<T>()
         {
-            Func<Type, object, object> func = (t, o) => GenericHelper.InvokeStatic(
+            Func<Type, object, object> func = (t, o) => GenericInvoker.InvokeStatic(
                 "Default",
                 typeof (TryParser),
                 new[] {t}, o);
@@ -34,7 +34,7 @@ namespace LoadFileData.ContentHandler.Settings
 
         public static IDictionary<string, Action<T, object>> CreateNullable<T>()
         {
-            Func<Type, object, object> func = (t, o) => GenericHelper.InvokeStatic(
+            Func<Type, object, object> func = (t, o) => GenericInvoker.InvokeStatic(
                 "Nullable",
                 typeof(TryParser),
                 new[] { t }, o);

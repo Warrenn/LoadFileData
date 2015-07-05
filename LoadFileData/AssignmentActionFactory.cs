@@ -9,10 +9,10 @@ namespace LoadFileData
         public static Func<object, T> ConvertFunction<T>()
         {
             var memberType = typeof(T);
-            var nullableMethodInfo = GenericHelper.MethodInfo(
+            var nullableMethodInfo = GenericInvoker.MethodInfo(
                 "Nullable",
                 typeof(TryParser),
-                GenericHelper.StaticFlags,
+                GenericInvoker.StaticFlags,
                 new[] { typeof(object) });
 
             MethodInfo convertMethod;

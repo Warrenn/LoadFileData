@@ -1,20 +1,71 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.IO;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text.RegularExpressions;
 using System.Threading;
 using LoadFileData.ContentReader;
 using LoadFileData.Tests.MockFactory;
-using Microsoft.VisualBasic.FileIO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-
 namespace LoadFileData.Tests.Controllers
 {
+
+    public class Migration<T> : DbMigrationsConfiguration<T> where T : DbContext
+    {
+        public Migration()
+        {
+            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
+        }
+
+        protected override void Seed(T context)
+        { }
+
+    }
+
+    public class DataClass
+    {
+        public int Id { get; set; }
+        public int Hash { get; set; }
+    }
+
+    public class DataClass2
+    {
+        public int Id { get; set; }
+        public decimal Hash { get; set; }
+    }
+
+    public class MyClass : DbContext
+    {
+        public MyClass()
+            : base("dbcontext")
+        {
+            
+        }
+
+        public DbSet<DataClass2> Class2 { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder
+                .Properties()
+                .Where(pi => pi.PropertyType == typeof (decimal))
+                .Configure(c => c.HasPrecision(10, 3));
+            modelBuilder
+                .Entity<DataClass2>()
+                .Property(dc => dc.Hash)
+                .HasPrecision(5, 3);
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+
     [TestClass]
     public class UnitTest1
     {
@@ -124,21 +175,26 @@ namespace LoadFileData.Tests.Controllers
             custNamePropBldr.SetSetMethod(custNameSetPropMthdBldr);
         }
 
-        public static TypeBuilder BuildDynamicTypeWithProperties(string typeName, Type baseTypes = null)
+        public static ModuleBuilder BaseBuilder()
         {
             var myDomain = Thread.GetDomain();
             var myAsmName = Assembly.GetExecutingAssembly().GetName();
 
             var myAsmBuilder = myDomain.DefineDynamicAssembly(myAsmName, AssemblyBuilderAccess.RunAndSave);
-            var myModBuilder = myAsmBuilder.DefineDynamicModule(myAsmName.Name, myAsmName.Name + ".dll");
+            return myAsmBuilder.DefineDynamicModule(myAsmName.Name, myAsmName.Name + ".dll");
 
-            return myModBuilder.DefineType(typeName, TypeAttributes.Public, baseTypes);
+        }
+
+        public static TypeBuilder BuildDynamicTypeWithProperties(ModuleBuilder baseBuilder, string typeName, Type baseTypes = null)
+        {
+            return baseBuilder.DefineType(typeName, TypeAttributes.Public, baseTypes);
         }
 
         [TestMethod]
         public void Test2()
         {
-            var builder = BuildDynamicTypeWithProperties("ClassA");
+            var baseb = BaseBuilder();
+            var builder = BuildDynamicTypeWithProperties(baseb, "ClassA", typeof(DataClass));
             AddProperty<string>(builder, "name");
             AddProperty<int>(builder, "age");
             var type = builder.CreateType();
@@ -149,8 +205,59 @@ namespace LoadFileData.Tests.Controllers
             i.SetValue(ins, "A new Name");
 
             var value = i.GetValue(ins);
-
             Assert.AreEqual("A new Name", value);
+
+        }
+
+        [TestMethod]
+        public void TestAgain()
+        {
+            var baseb = BaseBuilder();
+            var builder = BuildDynamicTypeWithProperties(baseb, "ClassA", typeof(DataClass));
+            AddProperty<string>(builder, "name");
+            AddProperty<string>(builder, "surname");
+            AddProperty<int>(builder, "age");
+            AddProperty<decimal>(builder, "amountd");
+            var type = builder.CreateType();
+
+            var builderMyClass = BuildDynamicTypeWithProperties(baseb, "newDbClass", typeof(MyClass));
+            var genPropType = typeof(DbSet<>);
+            var propType = genPropType.MakeGenericType(type);
+
+            AddProperty(builderMyClass, propType, "Propa");
+
+            var myClassType = builderMyClass.CreateType();
+            var migType = typeof(Migration<>).MakeGenericType(myClassType);
+            //var migInst = Activator.CreateInstance(migType);
+
+            //var migrator = new DbMigrator((DbMigrationsConfiguration)migInst);
+            //migrator.Update();;
+            var initType = typeof(MigrateDatabaseToLatestVersion<,>).MakeGenericType(myClassType, migType);
+            var initInst = Activator.CreateInstance(initType);
+
+            var initMethod = typeof(Database).GetMethod("SetInitializer").MakeGenericMethod(myClassType);
+            initMethod.Invoke(null, BindingFlags.Default, null, new[] { initInst }, CultureInfo.InvariantCulture);
+
+            var ctx = Activator.CreateInstance(myClassType);
+            var myClass =(MyClass)ctx;
+            myClass.Database.Initialize(true);
+            var prop = myClassType.GetMethod("Set", BindingFlags.Public | BindingFlags.Instance, null,
+                new[] {typeof (Type)}, null);
+
+            var values = myClass.Set(type);
+            var tinst = Activator.CreateInstance(type);
+            type.GetProperty("Amountd").SetMethod.Invoke(tinst, new object[] {12.666666789M});
+            type.GetProperty("Name").SetMethod.Invoke(tinst, new object[] {"name 2"});
+            type.GetProperty("Surname").SetMethod.Invoke(tinst, new object[] {"surname 2"});
+            type.GetProperty("Age").SetMethod.Invoke(tinst, new object[] {44});
+            values.Add(tinst);
+            var c = myClass.Class2.Create();
+            c.Hash = 12.66666666M;
+
+            myClass.Class2.Add(c);
+            myClass.SaveChanges();
+
+
         }
 
 
@@ -165,9 +272,9 @@ namespace LoadFileData.Tests.Controllers
         [TestMethod]
         public void Testttt()
         {
-            dynamic proxy = new GenericExpando(typeof(TryParser));
-            var datetime = proxy.Default(typeof (DateTime), "19oo-01-01");
-            Assert.AreEqual(new DateTime(1900, 1, 1), datetime);
+            dynamic proxy = new GenericInvoker(typeof(TryParser));
+            var datetime = proxy.Default(new[] { typeof(DateTime) }, "201O-08-14");
+            Assert.AreEqual(new DateTime(2010, 8, 14), datetime);
         }
 
         [TestMethod]

@@ -36,5 +36,20 @@ namespace LoadFileData.ContentReader
                 }
             }
         }
+
+
+        public int RowCount(Stream fileStream)
+        {
+            fileStream.Position = 0;
+            var rowCount = 1;
+            using (var reader = new StreamReader(fileStream, Encoding.UTF8, true))
+            {
+                while (!reader.EndOfStream)
+                {
+                    rowCount++;
+                }
+            }
+            return rowCount;
+        }
     }
 }

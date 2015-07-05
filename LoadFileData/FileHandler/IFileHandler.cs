@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace LoadFileData.FileWatcherService.FileHandler
+namespace LoadFileData.FileHandler
 {
     public interface IFileHandler : IDisposable
     {

@@ -16,28 +16,10 @@ namespace LoadFileData.ContentReader
 
         public IEnumerable<IEnumerable<object>> ReadContent(Stream fileStream)
         {
-            var package = new ExcelPackage(fileStream);
-            var workbook = package.Workbook;
-
-            if (workbook.Worksheets.Count < 1)
-            {
-                yield break;
-            }
-            var sheetName = settings.Sheet;
-            var worksheet = workbook.Worksheets[sheetName];
-
-            int sheetNumber;
-            if ((worksheet == null) &&
-                (int.TryParse(sheetName, out sheetNumber)) &&
-                (sheetNumber > 0) &&
-                (sheetNumber <= workbook.Worksheets.Count))
-            {
-                worksheet = workbook.Worksheets[sheetNumber];
-            }
-
+            var worksheet = GetWorkSheet(fileStream);
             if (worksheet == null)
             {
-                worksheet = workbook.Worksheets[1];
+                yield break;
             }
 
             var range = settings.Range;
@@ -65,6 +47,50 @@ namespace LoadFileData.ContentReader
                 }
                 yield return rowValues;
             }
+        }
+
+        private ExcelWorksheet GetWorkSheet(Stream fileStream)
+        {
+            fileStream.Position = 0;
+            var package = new ExcelPackage(fileStream);
+            var workbook = package.Workbook;
+
+            if (workbook.Worksheets.Count < 1)
+            {
+                return null;
+            }
+            var sheetName = settings.Sheet;
+            var worksheet = workbook.Worksheets[sheetName];
+
+            int sheetNumber;
+            if ((worksheet == null) &&
+                (int.TryParse(sheetName, out sheetNumber)) &&
+                (sheetNumber > 0) &&
+                (sheetNumber <= workbook.Worksheets.Count))
+            {
+                worksheet = workbook.Worksheets[sheetNumber];
+            }
+
+            return worksheet ?? workbook.Worksheets[1];
+        }
+
+
+        public int RowCount(Stream fileStream)
+        {
+            var range = settings.Range;
+            var rowEnd = range.RowEnd;
+            if (rowEnd == null)
+            {
+                var worksheet = GetWorkSheet(fileStream);
+                if (worksheet == null)
+                {
+                    return 0;
+                }
+
+                rowEnd = worksheet.Dimension.Rows;
+            }
+            var rowCount = (rowEnd.Value) - (range.RowStart - 1);
+            return (rowCount < 0) ? 0 : rowCount;
         }
     }
 }

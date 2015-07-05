@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace LoadFileData
 {
-    public class GenericExpando : DynamicObject
+    public class GenericInvoker : DynamicObject
     {
         private readonly object instance;
         private readonly Type staticType;
@@ -18,12 +18,12 @@ namespace LoadFileData
 
         public const BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase;
 
-        public GenericExpando(Type staticType)
+        public GenericInvoker(Type staticType)
         {
             this.staticType = staticType;
         }
 
-        public GenericExpando(object instance)
+        public GenericInvoker(object instance)
         {
             this.instance = instance;
         }
