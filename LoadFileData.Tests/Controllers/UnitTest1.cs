@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
-using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Dynamic;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Text.RegularExpressions;
-using System.Threading;
-using LoadFileData.ContentReader;
 using LoadFileData.ContentReaders;
 using LoadFileData.Tests.MockFactory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using LoadFileData.Web;
+﻿using LoadFileData.Web;
 using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartup(typeof(LoadFileData.Web.Startup))]
+[assembly: OwinStartup(typeof(Startup))]
 namespace LoadFileData.Web
 {
     public class Startup
@@ -19,7 +17,8 @@ namespace LoadFileData.Web
             //create the types from json
             //intialize the database with the types
             //create the filehandlers
-
+            //start the recovery
+            //start the monitoring
         }
     }
 }

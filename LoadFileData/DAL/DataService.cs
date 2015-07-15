@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LoadFileData.DAL.Models;
 
 namespace LoadFileData.DAL
@@ -28,14 +25,14 @@ namespace LoadFileData.DAL
 
         #region Implementation of IDataService
 
-        public void CommitChanges()
-        {
-            context.SaveChanges();
-        }
-
         public FileSource AddFileSource(FileSource fileSource)
         {
-            return context.FileSources.Add(fileSource);
+            var result = context.FileSources.Add(fileSource);
+            ExceptionHandler.Try(() =>
+            {
+                context.SaveChanges();
+            });
+            return result;
         }
 
         public void LogError(FileSource fileSource, Exception exception)
@@ -48,6 +45,8 @@ namespace LoadFileData.DAL
                 FileName = fileSource.OriginalFileName
             };
             context.Errors.Add(error);
+            fileSource.Status = FileStatus.Error;
+            context.FileSources.AddOrUpdate(fileSource);
             ExceptionHandler.Try(() =>
             {
                 context.SaveChanges();
@@ -74,6 +73,10 @@ namespace LoadFileData.DAL
             var entry = context.FileSources.Find(fileId);
             entry.TotalRows = totalRows;
             context.FileSources.AddOrUpdate(entry);
+            ExceptionHandler.Try(() =>
+            {
+                context.SaveChanges();
+            });
         }
 
         public object AddDataEntry(FileSource fileSource, object dataEntry, int rowCount)
@@ -85,13 +88,24 @@ namespace LoadFileData.DAL
             }
             entry.FileSource = fileSource;
             entry.FileSourceId = fileSource.Id;
-            return context.Set(dataEntry.GetType()).Add(dataEntry);
+            fileSource.CurrentRow = rowCount;
+            context.FileSources.AddOrUpdate(fileSource);
+            var result = context.Set(dataEntry.GetType()).Add(dataEntry);
+            ExceptionHandler.Try(() =>
+            {
+                context.SaveChanges();
+            });
+            return result;
         }
 
         public void MarkFileComplete(FileSource fileSource)
         {
             fileSource.Status = FileStatus.Completed;
             context.FileSources.AddOrUpdate(fileSource);
+            ExceptionHandler.Try(() =>
+            {
+                context.SaveChanges();
+            });
         }
 
         public IQueryable<FileSource> PendingExtration(string settingsName)
@@ -114,5 +128,26 @@ namespace LoadFileData.DAL
         }
 
         #endregion
+
+
+        public void MarkFileExtracting(FileSource fileSource)
+        {
+            fileSource.Status = FileStatus.Extracting;
+            context.FileSources.AddOrUpdate(fileSource);
+            ExceptionHandler.Try(() =>
+            {
+                context.SaveChanges();
+            });
+        }
+
+        public void MarkFilePaused(FileSource fileSource)
+        {
+            fileSource.Status = FileStatus.Paused;
+            context.FileSources.AddOrUpdate(fileSource);
+            ExceptionHandler.Try(() =>
+            {
+                context.SaveChanges();
+            });
+        }
     }
 }

@@ -3,10 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
-using LoadFileData.Constants;
-using LoadFileData.ContentHandler;
 using LoadFileData.ContentHandlers;
-using LoadFileData.ContentReader;
 using LoadFileData.ContentReaders;
 using LoadFileData.DAL;
 using LoadFileData.DAL.Models;
@@ -70,13 +67,11 @@ namespace LoadFileData.FileHandlers
                 fileSource = service.AddFileSource(fileSource);
                 if (service.IsDuplicate(fileSource))
                 {
-                    service.CommitChanges();
                     return;
                 }
                 stream.Seek(0, SeekOrigin.Begin);
                 var totalRows = reader.RowCount(stream);
                 service.UpdateTotalRows(newGuid, totalRows);
-                service.CommitChanges();
                 stream.Seek(0, SeekOrigin.Begin);
                 var enumerator = reader.ReadContent(stream);
                 var context = new ContentHandlerContext
@@ -88,15 +83,15 @@ namespace LoadFileData.FileHandlers
             }
             catch (Exception ex)
             {
-                fileSource.Status = FileStatus.Error;
                 service.LogError(fileSource, ex);
-                ExceptionPolicy.HandleException(ex, PolicyName.Default);
+                ExceptionPolicy.HandleException(ex, GetType().Name);
             }
         }
 
         public void ProcessFile(FileSource fileSource, ContentHandlerContext context, CancellationToken token)
         {
             var rowCount = 1;
+            service.MarkFileExtracting(fileSource);
             if (token.IsCancellationRequested)
             {
                 return;
@@ -105,14 +100,13 @@ namespace LoadFileData.FileHandlers
             {
                 if (token.IsCancellationRequested)
                 {
-                    service.CommitChanges();
+                    service.MarkFilePaused(fileSource);
                     return;
                 }
                 service.AddDataEntry(fileSource, dataEntry, rowCount);
                 rowCount++;
             }
             service.MarkFileComplete(fileSource);
-            service.CommitChanges();
         }
 
         public void ReportError(string fullPath, Exception exception)

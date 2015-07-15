@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using LoadFileData.ContentHandler;
 using LoadFileData.ContentHandlers.Settings;
 
 namespace LoadFileData.ContentHandlers

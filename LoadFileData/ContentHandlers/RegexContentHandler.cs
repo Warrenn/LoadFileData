@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using LoadFileData.ContentHandler;
 using LoadFileData.ContentHandlers.Settings;
 
 namespace LoadFileData.ContentHandlers
