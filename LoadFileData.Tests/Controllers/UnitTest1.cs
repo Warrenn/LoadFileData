@@ -12,6 +12,7 @@ using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 using System.Threading;
 using LoadFileData.ContentReader;
+using LoadFileData.ContentReaders;
 using LoadFileData.Tests.MockFactory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

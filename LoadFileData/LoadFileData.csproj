@@ -116,34 +116,34 @@
     <Compile Include="ClassBuilder.cs" />
     <Compile Include="ClassBuilderExtension.cs" />
     <Compile Include="Constants\PolicyName.cs" />
-    <Compile Include="ContentHandler\ContentHandlerBase.cs" />
-    <Compile Include="ContentHandler\ContentHandlerContext.cs" />
-    <Compile Include="ContentHandler\FixedIndexContentHandler.cs" />
-    <Compile Include="ContentHandler\RegexContentHandler.cs">
+    <Compile Include="ContentHandlers\ContentHandlerBase.cs" />
+    <Compile Include="ContentHandlers\ContentHandlerContext.cs" />
+    <Compile Include="ContentHandlers\FixedIndexContentHandler.cs" />
+    <Compile Include="ContentHandlers\RegexContentHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContentHandler\Settings\ContentHandlerSettings.cs" />
-    <Compile Include="ContentHandler\Settings\FieldConversionFactory.cs" />
-    <Compile Include="ContentHandler\Settings\FixedIndexSettings.cs" />
-    <Compile Include="ContentHandler\Settings\RegexSettings.cs" />
-    <Compile Include="ContentReader\DelimiteredReader.cs">
+    <Compile Include="ContentHandlers\Settings\ContentHandlerSettings.cs" />
+    <Compile Include="ContentHandlers\Settings\FieldConversionFactory.cs" />
+    <Compile Include="ContentHandlers\Settings\FixedIndexSettings.cs" />
+    <Compile Include="ContentHandlers\Settings\RegexSettings.cs" />
+    <Compile Include="ContentReaders\DelimiteredReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContentReader\FixedWidthReader.cs">
+    <Compile Include="ContentReaders\FixedWidthReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContentReader\Settings\ExcelRange.cs" />
-    <Compile Include="ContentReader\Settings\ExcelRangeFactory.cs" />
-    <Compile Include="ContentReader\Settings\ExcelSettings.cs" />
-    <Compile Include="ContentReader\Settings\TextReaderSettings.cs" />
-    <Compile Include="ContentReader\TextReaderBase.cs" />
-    <Compile Include="ContentReader\XlsContentReader.cs">
+    <Compile Include="ContentReaders\Settings\ExcelRange.cs" />
+    <Compile Include="ContentReaders\Settings\ExcelRangeFactory.cs" />
+    <Compile Include="ContentReaders\Settings\ExcelSettings.cs" />
+    <Compile Include="ContentReaders\Settings\TextReaderSettings.cs" />
+    <Compile Include="ContentReaders\TextReaderBase.cs" />
+    <Compile Include="ContentReaders\XlsContentReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContentReader\XlsxContentReader.cs">
+    <Compile Include="ContentReaders\XlsxContentReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContentHandler\IContentHandler.cs" />
+    <Compile Include="ContentHandlers\IContentHandler.cs" />
     <Compile Include="DAL\DataService.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -156,11 +156,11 @@
     <Compile Include="DAL\Models\FileSource.cs" />
     <Compile Include="DAL\Models\FileStatus.cs" />
     <Compile Include="DynamicProperties.cs" />
-    <Compile Include="FileHandler\FileHandler.cs" />
-    <Compile Include="FileHandler\FileHandlerSettings.cs" />
-    <Compile Include="FileHandler\FolderMonitor.cs" />
-    <Compile Include="FileHandler\IFileHandler.cs" />
-    <Compile Include="FileHandler\IRecoverWorkflow.cs" />
+    <Compile Include="FileHandlers\FileHandler.cs" />
+    <Compile Include="FileHandlers\FileHandlerSettings.cs" />
+    <Compile Include="FileHandlers\IFileHandler.cs" />
+    <Compile Include="FileHandlers\IRecoverWorkflow.cs" />
+    <Compile Include="FileHandlers\FolderMonitor.cs" />
     <Compile Include="GenericInvoker.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -172,13 +172,13 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ContentReader\Settings\DelimitedSettings.cs">
+    <Compile Include="ContentReaders\Settings\DelimitedSettings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContentReader\Settings\FixedWidthSettings.cs">
+    <Compile Include="ContentReaders\Settings\FixedWidthSettings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContentReader\IContentReader.cs">
+    <Compile Include="ContentReaders\IContentReader.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExceptionHandler.cs" />

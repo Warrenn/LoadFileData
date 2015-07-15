@@ -1,0 +1,17 @@
+﻿using LoadFileData.ContentHandler;
+using LoadFileData.ContentHandlers;
+using LoadFileData.ContentReader;
+using LoadFileData.ContentReaders;
+using LoadFileData.DAL;
+
+namespace LoadFileData.FileHandlers
+{
+    public class FileHandlerSettings<T> where T : new()
+    {
+        public string DestinationPath { get; set; }
+        public IDataService Service { get; set; };
+        public IContentReader Reader{ get; set; };
+        public IContentHandler<T> ContentHandler{ get; set; }
+        public string Name { get; set; }
+    }
+}
