@@ -139,7 +139,6 @@ namespace LoadFileData.Web.Controllers
         [Route("SetPassword")]
         public async Task<IHttpActionResult> SetPassword(SetPasswordBindingModel model)
         {
-             HostingEnvironment.QueueBackgroundWorkItem
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

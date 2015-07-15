@@ -1,4 +1,5 @@
 using System;
+using System.Web.Hosting;
 using System.Web.Http;
 using System.Web.Mvc;
 using LoadFileData.Web.Areas.HelpPage.ModelDescriptions;
@@ -27,6 +28,7 @@ namespace LoadFileData.Web.Areas.HelpPage.Controllers
 
         public ActionResult Index()
         {
+            AsyncManager
             ViewBag.DocumentationProvider = Configuration.Services.GetDocumentationProvider();
             return View(Configuration.Services.GetApiExplorer().ApiDescriptions);
         }

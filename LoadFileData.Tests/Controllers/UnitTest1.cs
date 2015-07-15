@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 using System.Threading;
 using LoadFileData.ContentReader;
 using LoadFileData.Tests.MockFactory;
@@ -47,7 +49,7 @@ namespace LoadFileData.Tests.Controllers
         public MyClass()
             : base("dbcontext")
         {
-            
+
         }
 
         public DbSet<DataClass2> Class2 { get; set; }
@@ -56,7 +58,7 @@ namespace LoadFileData.Tests.Controllers
         {
             modelBuilder
                 .Properties()
-                .Where(pi => pi.PropertyType == typeof (decimal))
+                .Where(pi => pi.PropertyType == typeof(decimal))
                 .Configure(c => c.HasPrecision(10, 3));
             modelBuilder
                 .Entity<DataClass2>()
@@ -131,133 +133,66 @@ namespace LoadFileData.Tests.Controllers
             }
         }
 
-        public static void AddProperty<T>(TypeBuilder builder, string propertyName)
-        {
-            var propertyType = typeof(T);
-            AddProperty(builder, propertyType, propertyName);
-        }
-
-        public static void AddProperty(TypeBuilder builder, Type propertyType, string propertyName)
-        {
-            propertyName = char.ToUpperInvariant(propertyName[0]) + propertyName.Substring(1);
-            var fieldName = char.ToLowerInvariant(propertyName[0]) + propertyName.Substring(1);
-
-            var customerNameBldr = builder.DefineField(fieldName, propertyType, FieldAttributes.Private);
-
-            var custNamePropBldr = builder.DefineProperty(propertyName, PropertyAttributes.HasDefault,
-                propertyType, null);
-
-            const MethodAttributes getSetAttr =
-                MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig |
-                MethodAttributes.Virtual;
-
-            var custNameGetPropMthdBldr = builder.DefineMethod("get_" + propertyName, getSetAttr, propertyType,
-                Type.EmptyTypes);
-
-            var custNameGetIl = custNameGetPropMthdBldr.GetILGenerator();
-
-            custNameGetIl.Emit(OpCodes.Ldarg_0);
-            custNameGetIl.Emit(OpCodes.Ldfld, customerNameBldr);
-            custNameGetIl.Emit(OpCodes.Ret);
-
-            var custNameSetPropMthdBldr = builder.DefineMethod("set_" + propertyName, getSetAttr, null,
-                new[] { propertyType });
-
-
-            var custNameSetIl = custNameSetPropMthdBldr.GetILGenerator();
-
-            custNameSetIl.Emit(OpCodes.Ldarg_0);
-            custNameSetIl.Emit(OpCodes.Ldarg_1);
-            custNameSetIl.Emit(OpCodes.Stfld, customerNameBldr);
-            custNameSetIl.Emit(OpCodes.Ret);
-
-            custNamePropBldr.SetGetMethod(custNameGetPropMthdBldr);
-            custNamePropBldr.SetSetMethod(custNameSetPropMthdBldr);
-        }
-
-        public static ModuleBuilder BaseBuilder()
-        {
-            var myDomain = Thread.GetDomain();
-            var myAsmName = Assembly.GetExecutingAssembly().GetName();
-
-            var myAsmBuilder = myDomain.DefineDynamicAssembly(myAsmName, AssemblyBuilderAccess.RunAndSave);
-            return myAsmBuilder.DefineDynamicModule(myAsmName.Name, myAsmName.Name + ".dll");
-
-        }
-
-        public static TypeBuilder BuildDynamicTypeWithProperties(ModuleBuilder baseBuilder, string typeName, Type baseTypes = null)
-        {
-            return baseBuilder.DefineType(typeName, TypeAttributes.Public, baseTypes);
-        }
-
         [TestMethod]
         public void Test2()
         {
-            var baseb = BaseBuilder();
-            var builder = BuildDynamicTypeWithProperties(baseb, "ClassA", typeof(DataClass));
-            AddProperty<string>(builder, "name");
-            AddProperty<int>(builder, "age");
-            var type = builder.CreateType();
+            var ins = ClassBuilder.CreateInstance("ClassA", new Dictionary<string, Type>
+            {
+                {"name", typeof (string)},
+                {"age", typeof (int)}
+            });
 
-            var ins = Activator.CreateInstance(type);
+            dynamic dyn = new DynamicProperties(ins);
+            dyn.Name = "A new Name";
 
-            var i = type.GetProperty("Name");
-            i.SetValue(ins, "A new Name");
-
-            var value = i.GetValue(ins);
+            var value = dyn.Name;
             Assert.AreEqual("A new Name", value);
 
         }
 
         [TestMethod]
+        public void Test4()
+        {
+            var m = Regex.Match("?78", "^([a-zA-Z]+|\\?)([1-9][0-9]*|\\?)$");
+            var d = 'A' - '@';
+            Assert.IsTrue(m.Success);
+        }
+
+        [TestMethod]
         public void TestAgain()
         {
-            var baseb = BaseBuilder();
-            var builder = BuildDynamicTypeWithProperties(baseb, "ClassA", typeof(DataClass));
-            AddProperty<string>(builder, "name");
-            AddProperty<string>(builder, "surname");
-            AddProperty<int>(builder, "age");
-            AddProperty<decimal>(builder, "amountd");
-            var type = builder.CreateType();
+            dynamic model = ClassBuilder
+                .Build("ClassA")
+                .Property<int>("Prop1")
+                .Property<string>("prop2")
+                .Property(typeof (decimal), "decprop")
+                .ToDynamic();
 
-            var builderMyClass = BuildDynamicTypeWithProperties(baseb, "newDbClass", typeof(MyClass));
-            var genPropType = typeof(DbSet<>);
-            var propType = genPropType.MakeGenericType(type);
+            dynamic dataContext = ClassBuilder
+                .Build("newDbClass", typeof (MyClass))
+                .CreateSet((Type) model.Type, "PropA")
+                .CreateSet<DataClass2>("Prop2")
+                .ToDynamic();
 
-            AddProperty(builderMyClass, propType, "Propa");
+            var migType = typeof (Migration<>).MakeGenericType(dataContext.Type);
 
-            var myClassType = builderMyClass.CreateType();
-            var migType = typeof(Migration<>).MakeGenericType(myClassType);
-            //var migInst = Activator.CreateInstance(migType);
-
-            //var migrator = new DbMigrator((DbMigrationsConfiguration)migInst);
-            //migrator.Update();;
-            var initType = typeof(MigrateDatabaseToLatestVersion<,>).MakeGenericType(myClassType, migType);
+            var initType = typeof (MigrateDatabaseToLatestVersion<,>).MakeGenericType(dataContext.Type, migType);
             var initInst = Activator.CreateInstance(initType);
 
-            var initMethod = typeof(Database).GetMethod("SetInitializer").MakeGenericMethod(myClassType);
-            initMethod.Invoke(null, BindingFlags.Default, null, new[] { initInst }, CultureInfo.InvariantCulture);
 
-            var ctx = Activator.CreateInstance(myClassType);
-            var myClass =(MyClass)ctx;
+            dynamic genericDatabase = new GenericInvoker(typeof (Database));
+            genericDatabase.SetInitializer(dataContext.Type, initInst);
+
+            var myClass = (MyClass) dataContext;
             myClass.Database.Initialize(true);
-            var prop = myClassType.GetMethod("Set", BindingFlags.Public | BindingFlags.Instance, null,
-                new[] {typeof (Type)}, null);
 
-            var values = myClass.Set(type);
-            var tinst = Activator.CreateInstance(type);
-            type.GetProperty("Amountd").SetMethod.Invoke(tinst, new object[] {12.666666789M});
-            type.GetProperty("Name").SetMethod.Invoke(tinst, new object[] {"name 2"});
-            type.GetProperty("Surname").SetMethod.Invoke(tinst, new object[] {"surname 2"});
-            type.GetProperty("Age").SetMethod.Invoke(tinst, new object[] {44});
-            values.Add(tinst);
-            var c = myClass.Class2.Create();
-            c.Hash = 12.66666666M;
-
-            myClass.Class2.Add(c);
+            var dataSet = myClass.Set(model.Type);
+            model.Amountd = 12.666666789M;
+            model.Name = "name 2";
+            model.Surname = "surname 2";
+            model.Age = 44;
+            dataSet.Add(model);
             myClass.SaveChanges();
-
-
         }
 
 

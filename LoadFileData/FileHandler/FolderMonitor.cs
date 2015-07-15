@@ -27,15 +27,21 @@ namespace LoadFileData.FileHandler
             this.path = path;
         }
 
-        public virtual void StartMonitoring()
+        public virtual void StartMonitoring(CancellationToken token)
         {
-            if (watcher != null) return;
+            if (watcher != null)
+            {
+                return;
+            }
             watcher = new FileSystemWatcher(path)
             {
                 EnableRaisingEvents = true,
                 NotifyFilter = NotifyFilters.FileName
             };
-            subscription = WatcherObservable.Subscribe(OnNext);
+            subscription = WatcherObservable.Subscribe(e =>
+            {
+                OnNext(e, token);
+            });
         }
 
         public virtual void StopMonitoring()
@@ -58,12 +64,21 @@ namespace LoadFileData.FileHandler
             set { watcherObservable = value; }
         }
 
-        protected virtual void OnNext(EventPattern<FileSystemEventArgs> newFileEvent)
+        protected virtual void OnNext(EventPattern<FileSystemEventArgs> newFileEvent, CancellationToken token)
         {
             var fullPath = newFileEvent.EventArgs.FullPath;
 
+            if (token.IsCancellationRequested)
+            {
+                StopMonitoring();
+                return;
+            }
             RetryScheduler.Schedule(0, TimeSpan.Zero, (state, recurse) =>
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
                 Stream stream;
                 try
                 {
@@ -83,7 +98,7 @@ namespace LoadFileData.FileHandler
                 }
                 try
                 {
-                    fileHandler.ProcessFile(fullPath, stream);
+                    fileHandler.ProcessFile(fullPath, stream, token);
                 }
                 catch (Exception ex)
                 {
@@ -95,6 +110,11 @@ namespace LoadFileData.FileHandler
                     stream.Dispose(PolicyName.Disposable);
                 }
             });
+            if (!token.IsCancellationRequested)
+            {
+                return;
+            }
+            StopMonitoring();
         }
 
         internal virtual IScheduler RetryScheduler

@@ -11,7 +11,8 @@ namespace LoadFileData.ContentReader.Settings
             {
                 return new Tuple<int?, int?>(null, null);
             }
-            var columnRowMatch = Regex.Match(columRowString, "^([a-zA-Z]+|\\?)([1-9][0-9]*|\\?)$");
+            var columnRowMatch = Regex.Match(columRowString, "^([a-zA-Z]+|\\?)([1-9][0-9]*|\\?)$",
+                RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
 
             if (!columnRowMatch.Success)
             {
@@ -21,8 +22,8 @@ namespace LoadFileData.ContentReader.Settings
                     : new Tuple<int?, int?>(GetInt(parts[0]), null);
             }
 
-            var columnString = columnRowMatch.Groups[0].Value.ToUpper();
-            var rowString = columnRowMatch.Groups[1].Value;
+            var columnString = columnRowMatch.Groups[1].Value.ToUpper();
+            var rowString = columnRowMatch.Groups[2].Value;
 
             int? column = null;
             if (columnString != "?")
