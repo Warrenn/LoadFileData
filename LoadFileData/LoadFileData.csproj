@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="AssemblyHelper.cs" />
     <Compile Include="ClassBuilder.cs" />
+    <Compile Include="ClassBuilderExtension.cs" />
     <Compile Include="Constants\PolicyName.cs" />
     <Compile Include="ContentHandler\ContentHandlerBase.cs" />
     <Compile Include="ContentHandler\ContentHandlerContext.cs" />
@@ -143,9 +144,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ContentHandler\IContentHandler.cs" />
-    <Compile Include="DAL\DataContextBase.cs" />
+    <Compile Include="DAL\DataService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DAL\DbContextBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DAL\IDataService.cs" />
     <Compile Include="DAL\Models\DataEntry.cs" />
+    <Compile Include="DAL\Models\Error.cs" />
     <Compile Include="DAL\Models\FileSource.cs" />
     <Compile Include="DAL\Models\FileStatus.cs" />
     <Compile Include="DynamicProperties.cs" />

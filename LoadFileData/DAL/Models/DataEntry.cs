@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -11,7 +12,11 @@ namespace LoadFileData.DAL.Models
     public class DataEntry
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
+
+        public virtual FileSource FileSource { get; set; }
+        public Guid FileSourceId { get; set; }
 
         public string EntryType
         {

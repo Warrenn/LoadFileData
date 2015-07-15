@@ -65,14 +65,16 @@ namespace LoadFileData.FileHandler
             };
             try
             {
-                service.AddFileSource(fileSource);
+                fileSource = service.AddFileSource(fileSource);
                 if (service.IsDuplicate(fileSource))
                 {
+                    service.CommitChanges();
                     return;
                 }
                 stream.Seek(0, SeekOrigin.Begin);
                 var totalRows = reader.RowCount(stream);
                 service.UpdateTotalRows(newGuid, totalRows);
+                service.CommitChanges();
                 stream.Seek(0, SeekOrigin.Begin);
                 var enumerator = reader.ReadContent(stream);
                 var context = new ContentHandlerContext
@@ -101,12 +103,14 @@ namespace LoadFileData.FileHandler
             {
                 if (token.IsCancellationRequested)
                 {
+                    service.CommitChanges();
                     return;
                 }
                 service.AddDataEntry(fileSource, dataEntry, rowCount);
                 rowCount++;
             }
             service.MarkFileComplete(fileSource);
+            service.CommitChanges();
         }
 
         public void ReportError(string fullPath, Exception exception)
