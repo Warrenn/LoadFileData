@@ -20,6 +20,11 @@ namespace LoadFileData
         {
         }
 
+        public object Instance
+        {
+            get { return instance; }
+        }
+
         public DynamicProperties(object instance)
         {
             if (instance == null)
@@ -33,11 +38,33 @@ namespace LoadFileData
 
         private PropertyInfo GetPropertyInfo(string propertyName)
         {
+            return GetPropertyInfo(propertyName, instanceGuid, instanceType);
+        }
+
+        private static PropertyInfo GetPropertyInfo(string propertyName, string instanceGuid, Type instanceType)
+        {
             var key = instanceGuid + propertyName;
             var lazy = MethodInfos
                 .GetOrAdd(key, new Lazy<PropertyInfo>(
                     () => instanceType.GetProperty(propertyName, InstanceFlags)));
             return lazy.Value;
+        }
+
+        public void TrySetValue(string propertyName, object value)
+        {
+            SetValue(instance, propertyName, value);
+        }
+
+        public static void SetValue(object instance, string propertyName, object value)
+        {
+            var instanceType = instance.GetType();
+            var instanceGuid = instanceType.GUID + ".";
+
+            var propertyInfo = GetPropertyInfo(propertyName, instanceGuid, instanceType);
+            if (propertyInfo != null)
+            {
+                propertyInfo.SetMethod.Invoke(instance, new[] {value});
+            }
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)

@@ -9,7 +9,7 @@ namespace LoadFileData.ContentHandlers.Settings
         {
             FieldConversion = FieldConversionFactory.CreateDefault<T>();
         }
-        public IDictionary<string, Action<T, object>> FieldConversion { get; set; }
+        public IDictionary<string, Func<object, object>> FieldConversion { get; set; }
         public int ContentLineNumber { get; set; }
     }
 }

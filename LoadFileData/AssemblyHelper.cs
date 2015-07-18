@@ -41,11 +41,15 @@ namespace LoadFileData
             var interfaceTypes = givenType.GetInterfaces();
 
             if (interfaceTypes.Any(it => it.IsGenericType && it.GetGenericTypeDefinition() == genericType))
+            {
                 return true;
+            }
 
 
             if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
+            {
                 return true;
+            }
 
             var baseType = givenType.BaseType;
             return baseType != null && IsAssignableToGenericType(baseType, genericType);

@@ -8,17 +8,20 @@ namespace LoadFileData.ContentReaders
     public class DelimiteredReader : TextReaderBase
     {
         private readonly string regexPattern;
-        private readonly bool removeWhiteSpace;
+        private readonly char[] trimChars;
+        private readonly string[] commentStrings;
 
-        public DelimiteredReader(DelimitedSettings settings) : base(settings)
+        public DelimiteredReader(DelimitedSettings settings)
+            : base(settings)
         {
             regexPattern = CreateRegexPattern(settings.Delimiters, settings.CommentStrings);
-            removeWhiteSpace = settings.RemoveWhiteSpace;
+            commentStrings = settings.CommentStrings;
+            trimChars = settings.RemoveWhiteSpace ? GetTrimChars(settings.CommentStrings) : null;
         }
 
-        public static string[] Split(string line, params string[] delimiters)
+        public static string[] SplitLine(string line, params string[] delimiters)
         {
-            return Split(line, delimiterStrings: delimiters);
+            return Split(line, delimiterStrings: delimiters, commentStrings: new[] {"\"", "'"});
         }
 
         private static string CreateRegexPattern(
@@ -43,19 +46,47 @@ namespace LoadFileData.ContentReaders
             string[] delimiterStrings = null,
             string[] commentStrings = null)
         {
+            var trimChars = trim ? GetTrimChars(commentStrings) : null;
             var regexPattern = CreateRegexPattern(delimiterStrings, commentStrings);
-            return Split(line, trim, regexPattern);
+            return Split(line, regexPattern, trimChars, commentStrings);
         }
 
-        private static string[] Split(string line, bool trim, string regexPattern)
+
+        private static string RemoveInnerComments(string value, IReadOnlyCollection<string> commentStrings)
+        {
+            if (commentStrings == null || commentStrings.Count == 0)
+            {
+                return value;
+            }
+            value = commentStrings.Aggregate(value,
+                ((seed, commentString) => seed.Replace(commentString + commentString, commentString)));
+            return value;
+        }
+
+        private static char[] GetTrimChars(IReadOnlyCollection<string> commentStrings)
+        {
+            if (commentStrings == null || commentStrings.Count == 0)
+            {
+                return new char[] { };
+            }
+            var result =
+                (from s in commentStrings
+                 from c in s
+                 select c).ToArray();
+            return result;
+        }
+
+        private static string[] Split(string line, string regexPattern, char[] trimChars, IReadOnlyCollection<string> commentStrings)
         {
             var result = Regex.Split(line, regexPattern, RegexOptions.Compiled | RegexOptions.Singleline);
-            return result.Select(s => trim ? s.Trim() : s).ToArray();
+            return result
+                .Select(s => RemoveInnerComments(s, commentStrings))
+                .Select(s => trimChars == null ? s : s.Trim().Trim(trimChars)).ToArray();
         }
-        
+
         public override IEnumerable<string> ReadRowValues(string line)
         {
-            return Split(line, removeWhiteSpace, regexPattern);
+            return Split(line, regexPattern, trimChars, commentStrings);
         }
     }
 }

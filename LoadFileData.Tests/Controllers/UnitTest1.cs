@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using LoadFileData.ContentReaders;
 using LoadFileData.Tests.MockFactory;
@@ -151,31 +152,72 @@ namespace LoadFileData.Tests.Controllers
         }
 
         [TestMethod]
+        public void Test5()
+        {
+            var method = "DateCon(0,','' ',\"strinsg,'' )()v\"\"alue  \"\"\"\"    \"    ,true)     ".Trim().TrimEnd(')');
+            var parts = Regex.Match(method, "^([^\\(]+)\\(?(.*)",
+                RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var paramst = DelimiteredReader.SplitLine(parts.Groups[2].Value);
+            var y = TryParser.Default<bool>("asdfasdf");
+            dynamic tryParser = new GenericInvoker(typeof(TryParser));
+            var d = tryParser.Default(typeof(bool), paramst[3]);
+            Assert.IsTrue(d);
+        }
+
+        public Func<object, DateTime> GetMethod(string arg)
+        {
+            return o => DateTime.Now;
+        }
+
+        [TestMethod]
+        public void TestString()
+        {
+            var teststring = "-|inside-|";
+            var news = teststring.Trim('-', '|');
+
+        }
+
+        [TestMethod]
+        public void Test6()
+        {
+            var thistype = GetType();
+            var mi = thistype.GetMethod("GetMethod");
+            var o = mi.Invoke(this, new object[] {"helo"});
+            //formi.GetParameters()
+            var typ = o.GetType();
+            var targs = typ.GenericTypeArguments;
+            var intt = targs[1];
+            var inkmi = o.GetType().GetMethod("Invoke");
+            var newd = inkmi.Invoke(o, new object[] {1});
+            Trace.Write(newd);
+        }
+
+        [TestMethod]
         public void TestAgain()
         {
             dynamic model = ClassBuilder
                 .Build("ClassA")
                 .Property<int>("Prop1")
                 .Property<string>("prop2")
-                .Property(typeof (decimal), "decprop")
+                .Property(typeof(decimal), "decprop")
                 .ToDynamic();
 
             dynamic dataContext = ClassBuilder
-                .Build("newDbClass", typeof (MyClass))
-                .CreateSet((Type) model.Type, "PropA")
+                .Build("newDbClass", typeof(MyClass))
+                .CreateSet((Type)model.Type, "PropA")
                 .CreateSet<DataClass2>("Prop2")
                 .ToDynamic();
 
-            var migType = typeof (Migration<>).MakeGenericType(dataContext.Type);
+            var migType = typeof(Migration<>).MakeGenericType(dataContext.Type);
 
-            var initType = typeof (MigrateDatabaseToLatestVersion<,>).MakeGenericType(dataContext.Type, migType);
+            var initType = typeof(MigrateDatabaseToLatestVersion<,>).MakeGenericType(dataContext.Type, migType);
             var initInst = Activator.CreateInstance(initType);
 
 
-            dynamic genericDatabase = new GenericInvoker(typeof (Database));
+            dynamic genericDatabase = new GenericInvoker(typeof(Database));
             genericDatabase.SetInitializer(dataContext.Type, initInst);
 
-            var myClass = (MyClass) dataContext;
+            var myClass = (MyClass)dataContext;
             myClass.Database.Initialize(true);
 
             var dataSet = myClass.Set(model.Type);
