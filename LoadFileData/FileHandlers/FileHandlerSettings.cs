@@ -8,8 +8,9 @@ namespace LoadFileData.FileHandlers
     {
         public string DestinationPath { get; set; }
         public IDataService Service { get; set; }
-        public IContentReader Reader{ get; set; }
-        public IContentHandler<T> ContentHandler{ get; set; }
+        public IContentReader Reader { get; set; }
+        public IContentHandler<T> ContentHandler { get; set; }
+        public IStreamManager StreamManager { get; set; }
         public string Name { get; set; }
     }
 }

@@ -96,7 +96,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ContentHandlers\IContentHandler.cs" />
-    <Compile Include="Converters\FunctionAttribute.cs" />
+    <Compile Include="Converters\ConverterAttribute.cs" />
     <Compile Include="Converters\ConverterManager.cs" />
     <Compile Include="DAL\DataService.cs">
       <SubType>Code</SubType>
@@ -115,6 +115,7 @@
     <Compile Include="FileHandlers\IFileHandler.cs" />
     <Compile Include="FileHandlers\IRecoverWorkflow.cs" />
     <Compile Include="FileHandlers\FolderMonitor.cs" />
+    <Compile Include="FileHandlers\IStreamManager.cs" />
     <Compile Include="GenericInvoker.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

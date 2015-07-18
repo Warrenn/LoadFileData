@@ -18,9 +18,13 @@ namespace LoadFileData.Tests.MockFactory
             if (typeToMock.IsInterface ||
                 typeToMock.IsAbstract ||
                 typeToMock.IsSubclassOf(typeof (Delegate)))
+            {
                 return true;
+            }
             if (typeToMock.IsClass)
+            {
                 return !typeToMock.IsSealed;
+            }
             return false;
         }
 

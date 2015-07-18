@@ -19,19 +19,16 @@ namespace LoadFileData.ContentReaders
 
         public IEnumerable<IEnumerable<object>> ReadContent(Stream fileStream)
         {
-            var qouteStrings = settings.CommentStrings.ToArray();
-
+            fileStream.Seek(0, SeekOrigin.Begin);
             using (var reader = new StreamReader(fileStream, Encoding.UTF8, true))
             {
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
-                    if ((string.IsNullOrEmpty(line)) ||
-                        (qouteStrings.Any(line.StartsWith)))
+                    if ((string.IsNullOrEmpty(line)))
                     {
                         continue;
                     }
-                    line = (settings.RemoveWhiteSpace) ? line.Trim() : line;
                     yield return ReadRowValues(line);
                 }
             }
@@ -40,7 +37,7 @@ namespace LoadFileData.ContentReaders
 
         public int RowCount(Stream fileStream)
         {
-            fileStream.Position = 0;
+            fileStream.Seek(0, SeekOrigin.Begin);
             var rowCount = 1;
             using (var reader = new StreamReader(fileStream, Encoding.UTF8, true))
             {

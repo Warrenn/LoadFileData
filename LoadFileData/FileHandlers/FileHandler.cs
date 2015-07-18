@@ -18,6 +18,7 @@ namespace LoadFileData.FileHandlers
         private readonly IContentReader reader;
         private readonly IContentHandler<T> contentHandler;
         private readonly string destinationPath;
+        private readonly IStreamManager streamManager;
 
         public FileHandler(FileHandlerSettings<T> settings)
         {
@@ -26,6 +27,7 @@ namespace LoadFileData.FileHandlers
             service = settings.Service;
             reader = settings.Reader;
             destinationPath = settings.DestinationPath;
+            streamManager = settings.StreamManager;
         }
 
         public void Dispose()
@@ -35,7 +37,11 @@ namespace LoadFileData.FileHandlers
 
         public static string GetHash(Stream stream)
         {
-            if ((stream == null) || (stream.Length <= 0)) return null;
+            if ((stream == null) || (stream.Length <= 0))
+            {
+                return null;
+            }
+            stream.Seek(0, SeekOrigin.Begin);
             var algorithm = SHA1.Create();
             var hashBytes = algorithm.ComputeHash(stream);
             var hash = Encoding.Default.GetString(hashBytes);
@@ -47,8 +53,7 @@ namespace LoadFileData.FileHandlers
             var newGuid = Guid.NewGuid();
             var fileType = Path.GetExtension(fullPath);
             var destination = string.Format(destinationPath, newGuid, fileType);
-            File.Copy(fullPath, destinationPath);
-            stream.Seek(0, SeekOrigin.Begin);
+            streamManager.CopyFile(fullPath, destinationPath);
             var hash = GetHash(stream);
             var fileSource = new FileSource
             {
@@ -69,10 +74,8 @@ namespace LoadFileData.FileHandlers
                 {
                     return;
                 }
-                stream.Seek(0, SeekOrigin.Begin);
                 var totalRows = reader.RowCount(stream);
                 service.UpdateTotalRows(newGuid, totalRows);
-                stream.Seek(0, SeekOrigin.Begin);
                 var enumerator = reader.ReadContent(stream);
                 var context = new ContentHandlerContext
                 {
@@ -118,7 +121,7 @@ namespace LoadFileData.FileHandlers
         {
             foreach (var fileSource in service.PendingExtration(settings.Name))
             {
-                var stream = File.OpenRead(fileSource.CurrentFileName);
+                var stream = streamManager.OpenRead(fileSource.CurrentFileName);
                 var enumerator = reader.ReadContent(stream);
                 var context = new ContentHandlerContext
                 {

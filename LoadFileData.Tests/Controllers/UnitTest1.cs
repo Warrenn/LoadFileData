@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using LoadFileData.ContentReaders;
+using LoadFileData.Converters;
+using LoadFileData.DAL;
+using LoadFileData.DAL.Models;
 using LoadFileData.Tests.MockFactory;
+using LoadFileData.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -127,6 +132,36 @@ namespace LoadFileData.Tests.Controllers
         }
 
         [TestMethod]
+        public void TheDataContextMustBeAbleToCreatePropertiesFromMultipleAssemblies()
+        {
+            var dataContext = DataServiceFactory.CreateDataContext(new Dictionary<string, Type>());
+
+            var migrationType = typeof(Migration<>).MakeGenericType(dataContext.GetType());
+
+            var initializerType = typeof(MigrateDatabaseToLatestVersion<,>).MakeGenericType(dataContext.GetType(), migrationType);
+            var initializerInstance = Activator.CreateInstance(initializerType);
+
+            var setInitializerMethodInfo = typeof(Database).GetMethod("SetInitializer");
+            var genericSetInitializerMethodInfo = setInitializerMethodInfo.MakeGenericMethod(dataContext.GetType());
+            genericSetInitializerMethodInfo.Invoke(null, new[] { initializerInstance });
+
+            var myClass = (DbContextBase)dataContext;
+            myClass.Database.Initialize(true);
+
+
+            var model = new Test3Class();
+            var dataSet = myClass.Set(model.GetType());
+            model.DataEntry3 = "Save This Data";
+            model.FileSource = new FileSource
+            {
+                DateEdit = DateTime.Today,
+                Id = Guid.NewGuid()
+            };
+            dataSet.Add(model);
+            myClass.SaveChanges();
+        }
+
+        [TestMethod]
         public void Test2()
         {
             var ins = ClassBuilder.CreateInstance("ClassA", new Dictionary<string, Type>
@@ -141,6 +176,21 @@ namespace LoadFileData.Tests.Controllers
             var value = dyn.Name;
             Assert.AreEqual("A new Name", value);
 
+        }
+
+        [Converter(SpecificName = "ConvertMe")]
+        public static Func<object, string> Convert(int a, bool? b, string c, DateTime time, DateTime? time2)
+        {
+            return o => string.Format("a:{0} b:{1} c:{2} time:{3} o:{4} time2:{5}", a, b, c, time, o, time2);
+        }
+
+        [TestMethod]
+        public void ConverterManagerNeedsToGetReflectedFunctions()
+        {
+            var converter = ConverterManager.GetConverter("ConvertMe(1,true,'yellow there','2012-12-31',\"asdfasdf\")");
+            Assert.AreEqual(typeof(string), converter.ReturnType);
+            var returnValue = converter.Function("the bid o");
+            Assert.AreEqual("a:1 b:True c:yellow there time:2012-12-31 12:00:00 AM o:the bid o time2:", returnValue);
         }
 
         [TestMethod]
@@ -164,7 +214,8 @@ namespace LoadFileData.Tests.Controllers
             Assert.IsTrue(d);
         }
 
-        public Func<object, DateTime> GetMethod(string arg)
+        [Converter]
+        public static Func<object, DateTime> GetMethod(string arg)
         {
             return o => DateTime.Now;
         }
@@ -182,13 +233,13 @@ namespace LoadFileData.Tests.Controllers
         {
             var thistype = GetType();
             var mi = thistype.GetMethod("GetMethod");
-            var o = mi.Invoke(this, new object[] {"helo"});
+            var o = mi.Invoke(this, new object[] { "helo" });
             //formi.GetParameters()
             var typ = o.GetType();
             var targs = typ.GenericTypeArguments;
             var intt = targs[1];
             var inkmi = o.GetType().GetMethod("Invoke");
-            var newd = inkmi.Invoke(o, new object[] {1});
+            var newd = inkmi.Invoke(o, new object[] { 1 });
             Trace.Write(newd);
         }
 
@@ -214,8 +265,9 @@ namespace LoadFileData.Tests.Controllers
             var initInst = Activator.CreateInstance(initType);
 
 
-            dynamic genericDatabase = new GenericInvoker(typeof(Database));
-            genericDatabase.SetInitializer(dataContext.Type, initInst);
+            var mi = typeof(Database).GetMethod("SetInitializer");
+            var gmi = mi.MakeGenericMethod(dataContext.Type);
+            gmi.Invoke(null, new object[] { initInst });
 
             var myClass = (MyClass)dataContext;
             myClass.Database.Initialize(true);
@@ -266,5 +318,10 @@ namespace LoadFileData.Tests.Controllers
             serviceMock.VerifyAll();
             Assert.AreEqual(234, result);
         }
+    }
+
+    public class Test3Class : DataEntry
+    {
+        public string DataEntry3 { get; set; }
     }
 }

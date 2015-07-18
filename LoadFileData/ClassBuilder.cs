@@ -100,7 +100,7 @@ namespace LoadFileData
             private readonly string className;
             private readonly Type baseType;
 
-            public FluentPropertyDescription(string className, IDictionary<string, Type> properties, Type baseType)
+            internal FluentPropertyDescription(string className, IDictionary<string, Type> properties, Type baseType)
             {
                 this.className = className;
                 this.baseType = baseType;
@@ -109,7 +109,7 @@ namespace LoadFileData
 
             public FluentPropertyDescription Property(Type type, string name)
             {
-                properties.Add(name, type);
+                properties[name] = type;
                 return new FluentPropertyDescription(className, properties, baseType);
             }
 
@@ -118,9 +118,25 @@ namespace LoadFileData
                 return Property(typeof(T), name);
             }
 
+            public FluentPropertyDescription Property(Type type)
+            {
+                return Property(type, type.Name);
+            }
+
+            public FluentPropertyDescription Property<T>()
+            {
+                return Property(typeof (T));
+            }
+
             public Type ToType()
             {
                 return CreateType(className, properties, baseType);
+            }
+
+            public object ToInstance()
+            {
+                var type = CreateType(className, properties, baseType);
+                return Activator.CreateInstance(type);
             }
 
             public dynamic ToDynamic()

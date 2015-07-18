@@ -47,7 +47,7 @@ namespace LoadFileData.ContentReaders
 
         private DataTable GetTable(Stream fileStream)
         {
-            fileStream.Position = 0;
+            fileStream.Seek(0, SeekOrigin.Begin);
             var reader = ExcelReaderFactory.CreateBinaryReader(fileStream);
             var dataSource = reader.AsDataSet();
             if (dataSource.Tables.Count < 1)

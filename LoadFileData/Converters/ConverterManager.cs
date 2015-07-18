@@ -15,100 +15,26 @@ namespace LoadFileData.Converters
             public Func<object, object> Function { get; set; }
         }
 
-        private static readonly IDictionary<string, Converter> DefaultFunctions =
-            new SortedDictionary<string, Converter>(StringComparer.InvariantCultureIgnoreCase)
+        private static readonly IDictionary<string, Type> TypeMap =
+            new SortedDictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase)
             {
-                {
-                    "int", new Converter
-                    {
-                        ReturnType = typeof (int),
-                        Function = o => TryParser.Default<int>(o)
-                    }
-                },
-                {
-                    "long", new Converter
-                    {
-                        ReturnType = typeof (long),
-                        Function = o => TryParser.Default<long>(o)
-                    }
-                },
-                {
-                    "decimal", new Converter
-                    {
-                        ReturnType = typeof (decimal),
-                        Function = o => TryParser.Default<int>(o)
-                    }
-                },
-                {
-                    "float", new Converter
-                    {
-                        ReturnType = typeof (float),
-                        Function = o => TryParser.Default<float>(o)
-                    }
-                },
-                {
-                    "bool", new Converter
-                    {
-                        ReturnType = typeof (bool),
-                        Function = o => TryParser.Default<bool>(o)
-                    }
-                },
-                {
-                    "DateTime", new Converter
-                    {
-                        ReturnType = typeof (DateTime),
-                        Function = o => TryParser.DateTime(o) ?? default(DateTime)
-                    }
-                },
-                {
-                    "string", new Converter
-                    {
-                        ReturnType = typeof (string),
-                        Function = o => o as string
-                    }
-                },
-                {
-                    "int?", new Converter
-                    {
-                        ReturnType = typeof (int?),
-                        Function = o => TryParser.Nullable<int>(o)
-                    }
-                },
-                {
-                    "long?", new Converter
-                    {
-                        ReturnType = typeof (long?),
-                        Function = o => TryParser.Nullable<long>(o)
-                    }
-                },
-                {
-                    "decimal?", new Converter
-                    {
-                        ReturnType = typeof (decimal?),
-                        Function = o => TryParser.Nullable<int>(o)
-                    }
-                },
-                {
-                    "float?", new Converter
-                    {
-                        ReturnType = typeof (float?),
-                        Function = o => TryParser.Nullable<float>(o)
-                    }
-                },
-                {
-                    "bool?", new Converter
-                    {
-                        ReturnType = typeof (bool?),
-                        Function = o => TryParser.Nullable<bool>(o)
-                    }
-                },
-                {
-                    "DateTime?", new Converter
-                    {
-                        ReturnType = typeof (DateTime?),
-                        Function = o => TryParser.DateTime(o)
-                    }
-                }
+                {"byte", typeof (byte)},
+                {"char", typeof (char)},
+                {"int", typeof (int)},
+                {"long", typeof (long)},
+                {"decimal", typeof (decimal)},
+                {"float", typeof (float)},
+                {"bool", typeof (bool)},
+                {"DateTime", typeof (DateTime)},
+                {"string", typeof (string)},
+                {"byte?", typeof (byte?)},
+                {"char?", typeof (char?)},
+                {"int?", typeof (int?)},
+                {"long?", typeof (long?)},
+                {"decimal?", typeof (decimal?)},
+                {"float?", typeof (float?)},
+                {"bool?", typeof (bool?)},
+                {"DateTime?", typeof (DateTime?)}
             };
 
         private static readonly IDictionary<string, MethodInfo> ReflectedFunctions = GetReflectedFunctions();
@@ -116,21 +42,47 @@ namespace LoadFileData.Converters
         private static IDictionary<string, MethodInfo> GetReflectedFunctions()
         {
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                    from type in AssemblyHelper.GetLoadableTypes(assembly)
-                    from info in type.GetMethods()
-                    where
-                        info.IsStatic &&
-                        typeof(Delegate).IsAssignableFrom(info.ReturnType) &&
-                        info.ReturnType.IsGenericType &&
-                        info.ReturnType.GenericTypeArguments.Count() == 2 &&
-                        info.ReturnType.GenericTypeArguments[0] == typeof(object)
-                    let attr = info
-                        .GetCustomAttributes(typeof(FunctionAttribute), false)
-                        .FirstOrDefault() as FunctionAttribute
-                    where attr != null
-                    select new { attr, info }).ToDictionary(
+                from type in AssemblyHelper.GetLoadableTypes(assembly)
+                from info in type.GetMethods()
+                where
+                    info.IsPublic &&
+                    info.IsStatic &&
+                    typeof (Delegate).IsAssignableFrom(info.ReturnType) &&
+                    info.ReturnType.IsGenericType &&
+                    info.ReturnType.GenericTypeArguments.Count() == 2 &&
+                    info.ReturnType.GenericTypeArguments[0] == typeof (object)
+                let attr = info
+                    .GetCustomAttributes(typeof (ConverterAttribute), false)
+                    .FirstOrDefault() as ConverterAttribute
+                where attr != null
+                select new {attr, info}).ToDictionary(
                     a => string.IsNullOrEmpty(a.attr.SpecificName) ? a.info.Name : a.attr.SpecificName,
                     a => a.info);
+        }
+
+        public static Type LookupType(string typeString)
+        {
+            if (TypeMap.ContainsKey(typeString))
+            {
+                return TypeMap[typeString];
+            }
+            var returnType = Type.GetType(typeString);
+            if (returnType != null)
+            {
+                return returnType;
+            }
+            var systemAssembly = Assembly.GetAssembly(typeof(short));
+            returnType = systemAssembly.GetType(typeString);
+            if (returnType != null)
+            {
+                return returnType;
+            }
+
+            return
+                (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                 from type in AssemblyHelper.GetLoadableTypes(assembly)
+                 where string.Equals(type.Name, typeString, StringComparison.InvariantCultureIgnoreCase)
+                 select type).FirstOrDefault();
         }
 
         public static Converter GetConverter(string convertString)
@@ -139,17 +91,12 @@ namespace LoadFileData.Converters
 
             var match = Regex.Match(convertString, "^([^\\(]+)\\(?(.*)",
                 RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            if (!match.Success || match.Groups.Count != 2 || match.Groups.Count != 3)
+            if (!match.Success || (match.Groups.Count != 2 && match.Groups.Count != 3))
             {
                 return null;
             }
 
             var methodName = match.Groups[1].Value;
-
-            if (DefaultFunctions.ContainsKey(methodName))
-            {
-                return DefaultFunctions[methodName];
-            }
 
             if (!ReflectedFunctions.ContainsKey(methodName))
             {
@@ -170,7 +117,7 @@ namespace LoadFileData.Converters
             return new Converter
             {
                 Function = convertFunc,
-                ReturnType = returnFunctionType.GenericTypeArguments[0]
+                ReturnType = returnFunctionType.GenericTypeArguments[1]
             };
         }
 
@@ -189,19 +136,11 @@ namespace LoadFileData.Converters
             }
 
             var returnValue = new object[parameters.Length];
-            dynamic tryParser = new GenericInvoker(typeof(TryParser));
 
             for (var i = 0; i < parameters.Length; i++)
             {
                 var parameterType = parameterInfos[i].ParameterType;
-                if (parameterType.IsValueType)
-                {
-                    returnValue[i] = tryParser.Default(parameterType, parameters[i]);
-                }
-                else
-                {
-                    returnValue[i] = Convert.ChangeType(parameters[i], parameterType);
-                }
+                returnValue[i] = TryParser.ChangeType(parameters[i], parameterType);
             }
 
             return returnValue;

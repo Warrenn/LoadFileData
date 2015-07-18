@@ -51,7 +51,7 @@ namespace LoadFileData.ContentReaders
 
         private ExcelWorksheet GetWorkSheet(Stream fileStream)
         {
-            fileStream.Position = 0;
+            fileStream.Seek(0, SeekOrigin.Begin);
             var package = new ExcelPackage(fileStream);
             var workbook = package.Workbook;
 

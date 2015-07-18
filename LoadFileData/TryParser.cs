@@ -10,9 +10,23 @@ namespace LoadFileData
     {
         private delegate bool TryParseDelegate<T>(string stringValue, out T instance) where T : struct;
 
+        private static readonly MethodInfo DefaultMethodInfo =
+            typeof (TryParser)
+                .GetMethod("Default", BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+        private static readonly MethodInfo NullableMethodInfo =
+            typeof (TryParser)
+                .GetMethod("Nullable", BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase);
+
         private static readonly ConcurrentDictionary<Type, Lazy<Delegate>> TryParseMethods =
             new ConcurrentDictionary<Type, Lazy<Delegate>>();
 
+        private static readonly ConcurrentDictionary<Type, Lazy<MethodInfo>> DefaultMethodInfos =
+            new ConcurrentDictionary<Type, Lazy<MethodInfo>>();
+
+        private static readonly ConcurrentDictionary<Type, Lazy<MethodInfo>> NullableMethodInfos =
+            new ConcurrentDictionary<Type, Lazy<MethodInfo>>();
+        
         private static readonly string[] Formats =
         {
             "yyyy-MM-dd",
@@ -29,6 +43,42 @@ namespace LoadFileData
             "dd-MM-yyyy hh:mm:ss tt",
             "o"
         };
+
+        private static object InvokeDefault(Type conversionType, object value)
+        {
+            var methodInfo = DefaultMethodInfos
+                .GetOrAdd(conversionType, new Lazy<MethodInfo>(
+                    () => DefaultMethodInfo.MakeGenericMethod(conversionType))).Value;
+            return methodInfo.Invoke(null, new[] {value});
+        }
+
+        private static object InvokeNullable(Type conversionType, object value)
+        {
+            var methodInfo = NullableMethodInfos
+                .GetOrAdd(conversionType, new Lazy<MethodInfo>(
+                    () => NullableMethodInfo.MakeGenericMethod(conversionType))).Value;
+            return methodInfo.Invoke(null, new[] {value});
+        }
+
+        public static object ChangeType(object value, Type conversionType)
+        {
+            if (conversionType == typeof(DateTime))
+            {
+                return DateTime(value) ?? default(DateTime);
+            }
+            if (!conversionType.IsValueType)
+            {
+                return Convert.ChangeType(value, conversionType);
+            }
+            if (!conversionType.IsGenericType || (conversionType.GetGenericTypeDefinition() != typeof(Nullable<>)))
+            {
+                return InvokeDefault(conversionType, value);
+            }
+            return conversionType.GenericTypeArguments[0] == typeof(DateTime)
+                ? DateTime(value)
+                : InvokeNullable(conversionType.GenericTypeArguments[0], value);
+        }
+
 
         public static DateTime? DateTime(object value, string[] formats = null)
         {

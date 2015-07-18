@@ -3,7 +3,7 @@
 namespace LoadFileData.Converters
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class FunctionAttribute : Attribute
+    public class ConverterAttribute : Attribute
     {
         public string SpecificName { get; set; }
     }

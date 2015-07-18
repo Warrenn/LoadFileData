@@ -7,13 +7,36 @@ namespace LoadFileData
 {
     public static class AssemblyHelper
     {
+        private static readonly Lazy<Type[]> LazyAssemblyTypes = new Lazy<Type[]>(LoadAllAssemblyTypes);
 
-        public static IEnumerable<Type> LoadableTypesOf(Type loadableType)
+        private static Type[] LoadAllAssemblyTypes()
         {
-            return
+            return (
                 from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                from type in LoadableTypesOf(loadableType, assembly)
-                select type;
+                from type in GetLoadableTypes(assembly)
+                select type).ToArray();
+        }
+
+        public static Type[] AllTypesInDomain()
+        {
+            return LazyAssemblyTypes.Value;
+        }
+
+        public static IEnumerable<Type> LoadableTypesOf(Type baseType)
+        {
+            var allTypes = AllTypesInDomain();
+            for (var i = 0; i < allTypes.Length; i++)
+            {
+                if (TypeIsLoadableFrom(allTypes[i], baseType))
+                {
+                    yield return allTypes[i];
+                }
+            }
+        }
+
+        public static bool TypeIsLoadableFrom(Type inheritedType, Type baseType)
+        {
+            return (inheritedType != baseType) && (baseType.IsAssignableFrom(inheritedType) || IsAssignableToGenericType(baseType, inheritedType));
         }
 
         public static IEnumerable<Type> LoadableTypesOf<T>()
@@ -22,17 +45,17 @@ namespace LoadFileData
             return LoadableTypesOf(type);
         }
 
-        public static IEnumerable<Type> LoadableTypesOf<T>(Assembly assembly)
+        public static IEnumerable<Type> LoadableTypesOf<T>(IEnumerable<Type> types)
         {
             var type = typeof (T);
-            return LoadableTypesOf(type, assembly);
+            return LoadableTypesOf(type, types);
         }
 
-        public static IEnumerable<Type> LoadableTypesOf(Type loadableType, Assembly assembly)
+        public static IEnumerable<Type> LoadableTypesOf(Type baseType, IEnumerable<Type> types)
         {
             return
-                from type in GetLoadableTypes(assembly)
-                where (type.IsAssignableFrom(loadableType) || IsAssignableToGenericType(type, loadableType))
+                from type in types
+                where TypeIsLoadableFrom(baseType, type)
                 select type;
         }
 
