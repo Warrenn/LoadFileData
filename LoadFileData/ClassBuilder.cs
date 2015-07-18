@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
+using PropertyAttributes = System.Reflection.PropertyAttributes;
 
 namespace LoadFileData
 {
@@ -109,7 +111,11 @@ namespace LoadFileData
 
             public FluentPropertyDescription Property(Type type, string name)
             {
-                properties[name] = type;
+                if (properties.ContainsKey(name))
+                {
+                    throw new DuplicateNameException(name);
+                }
+                properties.Add(name, type);
                 return new FluentPropertyDescription(className, properties, baseType);
             }
 

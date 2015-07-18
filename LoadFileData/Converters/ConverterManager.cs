@@ -41,21 +41,21 @@ namespace LoadFileData.Converters
 
         private static IDictionary<string, MethodInfo> GetReflectedFunctions()
         {
-            return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                from type in AssemblyHelper.GetLoadableTypes(assembly)
+            return (
+                from type in AssemblyHelper.AllTypesInDomain()
                 from info in type.GetMethods()
                 where
                     info.IsPublic &&
                     info.IsStatic &&
-                    typeof (Delegate).IsAssignableFrom(info.ReturnType) &&
+                    typeof(Delegate).IsAssignableFrom(info.ReturnType) &&
                     info.ReturnType.IsGenericType &&
                     info.ReturnType.GenericTypeArguments.Count() == 2 &&
-                    info.ReturnType.GenericTypeArguments[0] == typeof (object)
+                    info.ReturnType.GenericTypeArguments[0] == typeof(object)
                 let attr = info
-                    .GetCustomAttributes(typeof (ConverterAttribute), false)
+                    .GetCustomAttributes(typeof(ConverterAttribute), false)
                     .FirstOrDefault() as ConverterAttribute
                 where attr != null
-                select new {attr, info}).ToDictionary(
+                select new { attr, info }).ToDictionary(
                     a => string.IsNullOrEmpty(a.attr.SpecificName) ? a.info.Name : a.attr.SpecificName,
                     a => a.info);
         }
@@ -78,11 +78,10 @@ namespace LoadFileData.Converters
                 return returnType;
             }
 
-            return
-                (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                 from type in AssemblyHelper.GetLoadableTypes(assembly)
-                 where string.Equals(type.Name, typeString, StringComparison.InvariantCultureIgnoreCase)
-                 select type).FirstOrDefault();
+            return (
+                from type in AssemblyHelper.AllTypesInDomain()
+                where string.Equals(type.Name, typeString, StringComparison.InvariantCultureIgnoreCase)
+                select type).FirstOrDefault();
         }
 
         public static Converter GetConverter(string convertString)
