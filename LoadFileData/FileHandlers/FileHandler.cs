@@ -17,7 +17,7 @@ namespace LoadFileData.FileHandlers
         private readonly IDataService service;
         private readonly IContentReader reader;
         private readonly IContentHandler<T> contentHandler;
-        private readonly string destinationPath;
+        private readonly string destinationPathTemplate;
         private readonly IStreamManager streamManager;
 
         public FileHandler(FileHandlerSettings<T> settings)
@@ -26,7 +26,7 @@ namespace LoadFileData.FileHandlers
             contentHandler = settings.ContentHandler;
             service = settings.Service;
             reader = settings.Reader;
-            destinationPath = settings.DestinationPath;
+            destinationPathTemplate = settings.DestinationPathTemplate;
             streamManager = settings.StreamManager;
         }
 
@@ -52,8 +52,8 @@ namespace LoadFileData.FileHandlers
         {
             var newGuid = Guid.NewGuid();
             var fileType = Path.GetExtension(fullPath);
-            var destination = string.Format(destinationPath, newGuid, fileType);
-            streamManager.CopyFile(fullPath, destinationPath);
+            var destination = string.Format(destinationPathTemplate, newGuid, fileType);
+            streamManager.CopyFile(fullPath, destination);
             var hash = GetHash(stream);
             var fileSource = new FileSource
             {

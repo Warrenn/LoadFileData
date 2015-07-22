@@ -1,4 +1,11 @@
-﻿using LoadFileData.Web;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Threading;
+using System.Web.Hosting;
+using LoadFileData.FileHandlers;
+using LoadFileData.Web;
+using LoadFileData.Web.Constants;
 using Microsoft.Owin;
 using Owin;
 
@@ -7,18 +14,20 @@ namespace LoadFileData.Web
 {
     public class Startup
     {
+        private static IList<FolderMonitor> monitors = new List<FolderMonitor>();
+
         public void Configuration(IAppBuilder app)
         {
-            //loop through all the json files 
-            //create the settings for the handlers
-            //create the sttings for the readers
-            //create the filehandler settings
-            //create the folder monitors
-            //create the types from json
-            //intialize the database with the types
-            //create the filehandlers
-            //start the recovery
-            //start the monitoring
+            var handlerFactory = new FileHandlerFactory(new StreamManager());
+            var watchBase = ConfigurationManager.AppSettings[Folders.WatchBase];
+            foreach (var handlerPair in handlerFactory.CreateFileHandlers())
+            {
+                var watchFolder = string.Format(watchBase, handlerPair.Key);
+                var monitor = new FolderMonitor(watchFolder, handlerPair.Value);
+                HostingEnvironment.QueueBackgroundWorkItem((Action<CancellationToken>)monitor.StartMonitoring);
+                monitors.Add(monitor);
+            }
+
         }
     }
 }

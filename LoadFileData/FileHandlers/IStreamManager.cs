@@ -11,5 +11,7 @@ namespace LoadFileData.FileHandlers
     {
         void CopyFile(string source, string destination);
         Stream OpenRead(string fullPath);
+        IDictionary<string, string> DataEntries();
+        IDictionary<string, string> Definitions();
     }
 }

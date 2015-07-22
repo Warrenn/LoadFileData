@@ -8,11 +8,11 @@ namespace LoadFileData.ContentReaders
 {
     public abstract class TextReaderBase : IContentReader
     {
-        private readonly TextReaderSettings settings;
+        protected readonly TextReaderSettings Settings;
 
         protected TextReaderBase(TextReaderSettings settings)
         {
-            this.settings = settings;
+            Settings = settings;
         }
 
         public abstract IEnumerable<string> ReadRowValues(string line);

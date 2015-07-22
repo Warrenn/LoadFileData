@@ -55,6 +55,11 @@ namespace LoadFileData
             SetValue(instance, propertyName, value);
         }
 
+        public object TryGetValue(string propertyName)
+        {
+            return GetValue(instance, propertyName);
+        }
+
         public static void SetValue(object instance, string propertyName, object value)
         {
             var instanceType = instance.GetType();
@@ -65,6 +70,15 @@ namespace LoadFileData
             {
                 propertyInfo.SetMethod.Invoke(instance, new[] {value});
             }
+        }
+
+        public static object GetValue(object instance, string propertyName)
+        {
+            var instanceType = instance.GetType();
+            var instanceGuid = instanceType.GUID + ".";
+
+            var propertyInfo = GetPropertyInfo(propertyName, instanceGuid, instanceType);
+            return propertyInfo != null ? propertyInfo.GetMethod.Invoke(instance, null) : null;
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)

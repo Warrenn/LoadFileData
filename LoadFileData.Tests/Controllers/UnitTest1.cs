@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Diagnostics;
@@ -134,7 +135,7 @@ namespace LoadFileData.Tests.Controllers
         [TestMethod]
         public void TheDataContextMustBeAbleToCreatePropertiesFromMultipleAssemblies()
         {
-            var dataContext = DataServiceFactory.CreateDataContext(new Dictionary<string, Type>());
+            var dataContext = FileHandlerFactory.CreateDataContext(new Dictionary<string, Type>());
 
             var migrationType = typeof(Migration<>).MakeGenericType(dataContext.GetType());
 
@@ -176,6 +177,18 @@ namespace LoadFileData.Tests.Controllers
             var value = dyn.Name;
             Assert.AreEqual("A new Name", value);
 
+        }
+
+        [TestMethod]
+        public void RegexMustNotAllowNumbersInfront()
+        {
+            var inputdata = "1a v_aria-ble ' name () == 123$123[";
+
+            
+            var input2 = "ava_riable   ggg  -pp";
+            var replacement2 = Regex.Replace(input2, "[^\\d\\w]*", "", RegexOptions.Compiled);
+
+            Assert.IsNotNull(replacement);
         }
 
         [Converter(SpecificName = "ConvertMe")]

@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LoadFileData</RootNamespace>
     <AssemblyName>LoadFileData</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -113,6 +114,7 @@
     <Compile Include="FileHandlers\FileHandler.cs" />
     <Compile Include="FileHandlers\FileHandlerSettings.cs" />
     <Compile Include="FileHandlers\IFileHandler.cs" />
+    <Compile Include="FileHandlers\IFileHandlerFactory.cs" />
     <Compile Include="FileHandlers\IRecoverWorkflow.cs" />
     <Compile Include="FileHandlers\FolderMonitor.cs" />
     <Compile Include="FileHandlers\IStreamManager.cs" />

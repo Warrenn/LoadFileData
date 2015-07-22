@@ -79,6 +79,11 @@ namespace LoadFileData
                 : InvokeNullable(conversionType.GenericTypeArguments[0], value);
         }
 
+        public static T ChangeType<T>(object value)
+        {
+            return (T) ChangeType(value, typeof (T));
+        }
+
 
         public static DateTime? DateTime(object value, string[] formats = null)
         {

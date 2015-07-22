@@ -6,7 +6,7 @@ namespace LoadFileData.FileHandlers
 {
     public class FileHandlerSettings<T> where T : new()
     {
-        public string DestinationPath { get; set; }
+        public string DestinationPathTemplate { get; set; }
         public IDataService Service { get; set; }
         public IContentReader Reader { get; set; }
         public IContentHandler<T> ContentHandler { get; set; }
