@@ -12,11 +12,11 @@ namespace LoadFileData.Web
 {
     public class TypeMapFactory : ITypeMapFactory
     {
-        private readonly Lazy<IDictionary<string, Type>> lazyMaping;
+        private readonly Lazy<IDictionary<string, Type>> lazyTypeMap;
 
         public TypeMapFactory()
         {
-            lazyMaping = new Lazy<IDictionary<string, Type>>(InternalMapping);
+            lazyTypeMap = new Lazy<IDictionary<string, Type>>(CreateTypeMapInternal);
         }
 
         public static string ScrubVariableName(string variableName)
@@ -43,19 +43,7 @@ namespace LoadFileData.Web
 
         protected virtual IDictionary<string, string> ReadJsonSettings()
         {
-            var settingsFolder = ConfigurationManager.AppSettings[Folders.DataEntries];
-            if (string.IsNullOrEmpty(settingsFolder) || !Directory.Exists(settingsFolder))
-            {
-                throw new SettingsPropertyWrongTypeException(
-                    string.Format("AppSetting {0} must be a reference to a folder that exists", Folders.DataEntries));
-            }
-
-            var settings = new Dictionary<string, string>();
-            foreach (var fileName in Directory.GetFiles(settingsFolder, "*.json"))
-            {
-                settings[fileName] = File.ReadAllText(fileName);
-            }
-            return settings;
+            return StreamManager.AppSettingsFiles(Folders.DataEntries);
         }
 
         protected virtual Type CreateTypeFromJson(string name, string jsonData)
@@ -77,7 +65,7 @@ namespace LoadFileData.Web
             return builder.ToType();
         }
 
-        protected virtual IDictionary<string, Type> InternalMapping()
+        protected virtual IDictionary<string, Type> CreateTypeMapInternal()
         {
             var dataEntryTypes = AssemblyHelper
                 .LoadableTypesOf<DataEntry>()
@@ -96,9 +84,9 @@ namespace LoadFileData.Web
             return dataEntryTypes;
         }
 
-        public IDictionary<string, Type> CreateTypeMapping()
+        public IDictionary<string, Type> CreateTypeMap()
         {
-            return lazyMaping.Value;
+            return lazyTypeMap.Value;
         }
     }
 }

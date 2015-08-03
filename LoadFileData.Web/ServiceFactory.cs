@@ -7,20 +7,21 @@ namespace LoadFileData.Web
 {
     public class ServiceFactory : IServiceFactory
     {
-        private readonly IDictionary<string, Type> mapping;
+        private readonly IDictionary<string, Type> typeMap;
 
-        public ServiceFactory(IDictionary<string,Type> mapping)
+        public ServiceFactory(IDictionary<string,Type> typeMap)
         {
-            this.mapping = mapping;
+            this.typeMap = typeMap;
         }
 
         public IDataService Create()
         {
             var classBuilder = ClassBuilder
                 .Build<DbContextBase>("WebDbContext");
-            classBuilder = mapping.Values.Aggregate(classBuilder, (current, type) => current.CreateSet(type));
-            var instance = classBuilder.ToInstance();
-            return instance as IDataService;
+            classBuilder = typeMap.Values.Aggregate(classBuilder, (current, type) => current.CreateSet(type));
+            var dbInstance = classBuilder.ToInstance();
+            var dataServie = new DataService(dbInstance as DbContextBase);
+            return dataServie;
         }
     }
 }

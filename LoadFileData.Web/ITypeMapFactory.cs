@@ -5,6 +5,6 @@ namespace LoadFileData.Web
 {
     public interface ITypeMapFactory
     {
-        IDictionary<string, Type> CreateTypeMapping();
+        IDictionary<string, Type> CreateTypeMap();
     }
 }

@@ -29,23 +29,6 @@ namespace LoadFileData.Web
             this.handlerConverter = handlerConverter;
         }
 
-        protected virtual IDictionary<string, string> ReadJsonSettings()
-        {
-            var settingsFolder = ConfigurationManager.AppSettings[Folders.WatchDefinitons];
-            if (string.IsNullOrEmpty(settingsFolder) || !Directory.Exists(settingsFolder))
-            {
-                throw new SettingsPropertyWrongTypeException(
-                    string.Format("AppSetting {0} must be a reference to a folder that exists", Folders.WatchDefinitons));
-            }
-
-            var settings = new Dictionary<string, string>();
-            foreach (var fileName in Directory.GetFiles(settingsFolder,"*.json"))
-            {
-                settings[fileName] = File.ReadAllText(fileName);
-            }
-            return settings;
-        }
-
 
         #region Implementation of IFileHandlerFactory
 
@@ -83,6 +66,11 @@ namespace LoadFileData.Web
             }
 
             return returnValue;
+        }
+
+        protected virtual IDictionary<string,string> ReadJsonSettings()
+        {
+            return StreamManager.AppSettingsFiles(Folders.WatchDefinitons);
         }
 
         #endregion
