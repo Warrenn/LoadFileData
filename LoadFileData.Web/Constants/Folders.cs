@@ -2,9 +2,9 @@
 {
     public static class Folders
     {
-        public const string DataEntries = "Folders::DataEntries";
-        public const string CopyTo = "Folders::CopyTo";
-        public const string WatchDefinitons = "Folders::WatchDefinitons";
-        public const string WatchBase = "Folders::WatchBase";
+        public const string DataEntries = "LoadFileData:DataEntries";
+        public const string CopyTo = "LoadFileData:CopyTo";
+        public const string WatchDefinitons = "LoadFileData:WatchDefinitons";
+        public const string WatchBase = "LoadFileData:WatchBase";
     }
 }

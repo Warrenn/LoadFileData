@@ -113,7 +113,8 @@ namespace LoadFileData.DAL
             return context
                 .FileSources
                 .Where(source =>
-                    source.Status == FileStatus.PendingExtraction &&
+                    (source.Status == FileStatus.PendingExtraction ||
+                     source.Status == FileStatus.Paused) &&
                     source.SettingsName == settingsName);
         }
 

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LoadFileData.FileHandlers;
 
 namespace LoadFileData.Web
@@ -18,16 +14,6 @@ namespace LoadFileData.Web
         }
 
         public Stream OpenRead(string fullPath)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDictionary<string, string> DataEntries()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDictionary<string, string> Definitions()
         {
             throw new NotImplementedException();
         }

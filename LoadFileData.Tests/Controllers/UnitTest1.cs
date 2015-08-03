@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.RegularExpressions;
 using LoadFileData.ContentReaders;
 using LoadFileData.Converters;
-using LoadFileData.DAL;
 using LoadFileData.DAL.Models;
 using LoadFileData.Tests.MockFactory;
-using LoadFileData.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

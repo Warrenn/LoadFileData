@@ -85,10 +85,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\Folders.cs" />
-    <Compile Include="FileHandlerFactory.cs" />
+    <Compile Include="FileHandlerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ITypeMapFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceFactory.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="StreamManager.cs" />
+    <Compile Include="TypeMapFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

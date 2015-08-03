@@ -110,6 +110,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DAL\IDataService.cs" />
+    <Compile Include="DAL\IServiceFactory.cs" />
     <Compile Include="DAL\Models\DataEntry.cs" />
     <Compile Include="DAL\Models\Error.cs" />
     <Compile Include="DAL\Models\FileSource.cs" />

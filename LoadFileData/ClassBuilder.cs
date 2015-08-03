@@ -85,50 +85,50 @@ namespace LoadFileData
             return myAsmBuilder.DefineDynamicModule(myAsmName.Name, myAsmName.Name + ".dll");
         }
 
-        public static FluentPropertyDescription Build(string className, Type baseType = null)
+        public static FluentClassBuilder Build(string className, Type baseType = null)
         {
-            return new FluentPropertyDescription(className, new Dictionary<string, Type>(), baseType);
+            return new FluentClassBuilder(className, new Dictionary<string, Type>(), baseType);
         }
 
-        public static FluentPropertyDescription Build<T>(string className)
+        public static FluentClassBuilder Build<T>(string className)
         {
             return Build(className, typeof(T));
         }
 
-        public class FluentPropertyDescription
+        public class FluentClassBuilder
         {
             private readonly IDictionary<string, Type> properties;
             private readonly string className;
             private readonly Type baseType;
 
-            internal FluentPropertyDescription(string className, IDictionary<string, Type> properties, Type baseType)
+            internal FluentClassBuilder(string className, IDictionary<string, Type> properties, Type baseType)
             {
                 this.className = className;
                 this.baseType = baseType;
                 this.properties = properties;
             }
 
-            public FluentPropertyDescription Property(Type type, string name)
+            public FluentClassBuilder Property(Type type, string name)
             {
                 if (properties.ContainsKey(name))
                 {
                     throw new DuplicateNameException(name);
                 }
                 properties.Add(name, type);
-                return new FluentPropertyDescription(className, properties, baseType);
+                return new FluentClassBuilder(className, properties, baseType);
             }
 
-            public FluentPropertyDescription Property<T>(string name)
+            public FluentClassBuilder Property<T>(string name)
             {
                 return Property(typeof(T), name);
             }
 
-            public FluentPropertyDescription Property(Type type)
+            public FluentClassBuilder Property(Type type)
             {
                 return Property(type, type.Name);
             }
 
-            public FluentPropertyDescription Property<T>()
+            public FluentClassBuilder Property<T>()
             {
                 return Property(typeof (T));
             }
