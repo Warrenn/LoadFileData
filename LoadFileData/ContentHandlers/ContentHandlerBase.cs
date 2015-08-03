@@ -5,12 +5,12 @@ using LoadFileData.ContentHandlers.Settings;
 
 namespace LoadFileData.ContentHandlers
 {
-    public abstract class ContentHandlerBase<T> : IContentHandler<T> where T : new()
+    public abstract class ContentHandlerBase : IContentHandler 
     {
         private readonly IDictionary<string, Func<object, object>> converters;
         private readonly int contentLineNumber;
 
-        protected ContentHandlerBase(ContentHandlerSettings<T> settings)
+        protected ContentHandlerBase(ContentHandlerSettings settings)
         {
             converters = settings.FieldConversion;
             contentLineNumber = settings.ContentLineNumber;
@@ -18,9 +18,9 @@ namespace LoadFileData.ContentHandlers
 
         public abstract IDictionary<int, string> GetFieldLookup(int lineNumber, object[] values);
 
-        public virtual T Convert(IDictionary<string, object> keyValues)
+        public virtual object Convert(IDictionary<string, object> keyValues)
         {
-            var instance = new T();
+            var instance = new object();
             var setter = new DynamicProperties(instance);
             foreach (var property in keyValues)
             {
@@ -34,7 +34,7 @@ namespace LoadFileData.ContentHandlers
             return instance;
         }
 
-        public virtual IEnumerable<T> HandleContent(ContentHandlerContext context)
+        public virtual IEnumerable<object> HandleContent(ContentHandlerContext context)
         {
             var lineNumber = 1;
             IDictionary<int, string> fieldLookup = new Dictionary<int, string>();

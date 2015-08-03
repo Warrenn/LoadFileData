@@ -45,6 +45,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -111,14 +115,17 @@
     <Compile Include="DAL\Models\FileSource.cs" />
     <Compile Include="DAL\Models\FileStatus.cs" />
     <Compile Include="DynamicProperties.cs" />
+    <Compile Include="Monitors\CompositeMonitor.cs" />
     <Compile Include="FileHandlers\FileHandler.cs" />
     <Compile Include="FileHandlers\FileHandlerSettings.cs" />
     <Compile Include="FileHandlers\IFileHandler.cs" />
     <Compile Include="FileHandlers\IFileHandlerFactory.cs" />
+    <Compile Include="Monitors\IMonitor.cs" />
     <Compile Include="FileHandlers\IRecoverWorkflow.cs" />
-    <Compile Include="FileHandlers\FolderMonitor.cs" />
+    <Compile Include="Monitors\FolderMonitor.cs" />
     <Compile Include="FileHandlers\IStreamManager.cs" />
     <Compile Include="GenericInvoker.cs" />
+    <Compile Include="Monitors\RecoverWorkflowsMonitor.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

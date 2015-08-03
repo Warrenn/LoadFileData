@@ -5,13 +5,13 @@ using LoadFileData.ContentHandlers.Settings;
 
 namespace LoadFileData.ContentHandlers
 {
-    public class RegexContentHandler<T> : ContentHandlerBase<T> where T : new()
+    public class RegexContentHandler<T> : ContentHandlerBase
     {
 
         private readonly IDictionary<string, string> fieldExpressions;
         private readonly int headerLineNumber;
 
-        public RegexContentHandler(RegexSettings<T> settings) : base(settings)
+        public RegexContentHandler(RegexSettings settings) : base(settings)
         {
             fieldExpressions = settings.FieldExpressions;
             headerLineNumber = settings.HeaderLineNumber;

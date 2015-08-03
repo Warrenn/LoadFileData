@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LoadFileData.ContentHandlers.Settings
 {
-    public class RegexSettings<T> : ContentHandlerSettings<T>
+    public class RegexSettings : ContentHandlerSettings
     {
-        public RegexSettings()
+        public RegexSettings(Type type)
+            : base(type)
         {
-            FieldExpressions = typeof(T)
+            FieldExpressions = type
                 .GetFields()
                 .ToDictionary(f => f.Name, f => f.Name);
             HeaderLineNumber = 1;

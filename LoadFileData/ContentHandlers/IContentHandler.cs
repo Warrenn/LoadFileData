@@ -2,8 +2,8 @@
 
 namespace LoadFileData.ContentHandlers
 {
-    public interface IContentHandler<out T> where T : new()
+    public interface IContentHandler
     {
-        IEnumerable<T> HandleContent(ContentHandlerContext context);
+        IEnumerable<object> HandleContent(ContentHandlerContext context);
     }
 }

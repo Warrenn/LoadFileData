@@ -109,57 +109,24 @@ namespace LoadFileData.Tests.Controllers
 
         public class Controller
         {
-            private readonly ServiceBase service;
-            private readonly IService3 service3;
+            private readonly IService service;
+            private readonly IService2 service2;
 
-            public int A;
-            public string B;
-
-            public Controller(ServiceBase service, IService3 service3)
+            public Controller(IService service, IService2 service2)
             {
                 this.service = service;
-                this.service3 = service3;
+                this.service2 = service2;
             }
 
             public virtual int TestMethod(int input)
             {
-                return service.NewResult(input);
+                return service.TestResult(input);
             }
 
             public virtual int Service3Test()
             {
-                return service3.TestResult3();
+                return service2.TestResult2();
             }
-        }
-
-        [TestMethod]
-        public void TheDataContextMustBeAbleToCreatePropertiesFromMultipleAssemblies()
-        {
-            var dataContext = FileHandlerFactory.CreateDataContext(new Dictionary<string, Type>());
-
-            var migrationType = typeof(Migration<>).MakeGenericType(dataContext.GetType());
-
-            var initializerType = typeof(MigrateDatabaseToLatestVersion<,>).MakeGenericType(dataContext.GetType(), migrationType);
-            var initializerInstance = Activator.CreateInstance(initializerType);
-
-            var setInitializerMethodInfo = typeof(Database).GetMethod("SetInitializer");
-            var genericSetInitializerMethodInfo = setInitializerMethodInfo.MakeGenericMethod(dataContext.GetType());
-            genericSetInitializerMethodInfo.Invoke(null, new[] { initializerInstance });
-
-            var myClass = (DbContextBase)dataContext;
-            myClass.Database.Initialize(true);
-
-
-            var model = new Test3Class();
-            var dataSet = myClass.Set(model.GetType());
-            model.DataEntry3 = "Save This Data";
-            model.FileSource = new FileSource
-            {
-                DateEdit = DateTime.Today,
-                Id = Guid.NewGuid()
-            };
-            dataSet.Add(model);
-            myClass.SaveChanges();
         }
 
         [TestMethod]
@@ -186,12 +153,12 @@ namespace LoadFileData.Tests.Controllers
 
             
             var input2 = "ava_riable   ggg  -pp";
-            var replacement2 = Regex.Replace(input2, "[^\\d\\w]*", "", RegexOptions.Compiled);
+            var replacement = Regex.Replace(input2, "[^\\d\\w]*", "", RegexOptions.Compiled);
 
             Assert.IsNotNull(replacement);
         }
 
-        [Converter(SpecificName = "ConvertMe")]
+        [Converter(Name = "ConvertMe")]
         public static Func<object, string> Convert(int a, bool? b, string c, DateTime time, DateTime? time2)
         {
             return o => string.Format("a:{0} b:{1} c:{2} time:{3} o:{4} time2:{5}", a, b, c, time, o, time2);
@@ -238,6 +205,12 @@ namespace LoadFileData.Tests.Controllers
         {
             var teststring = "-|inside-|";
             var news = teststring.Trim('-', '|');
+
+        }
+
+        [TestMethod]
+        public void Testtr()
+        {
 
         }
 

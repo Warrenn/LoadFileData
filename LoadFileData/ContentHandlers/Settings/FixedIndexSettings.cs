@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LoadFileData.ContentHandlers.Settings
 {
-    public class FixedIndexSettings<T> : ContentHandlerSettings<T>
+    public class FixedIndexSettings : ContentHandlerSettings
     {
-        public FixedIndexSettings()
+        public FixedIndexSettings(Type type)
+            : base(type)
         {
             var index = -1;
-            FieldIndices = typeof (T)
+            FieldIndices = type
                 .GetFields()
                 .ToDictionary(f => index++, f => f.Name);
             ContentLineNumber = 1;

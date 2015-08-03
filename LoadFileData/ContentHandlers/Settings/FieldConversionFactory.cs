@@ -5,9 +5,8 @@ namespace LoadFileData.ContentHandlers.Settings
 {
     public static class FieldConversionFactory
     {
-        public static IDictionary<string, Func<object, object>> CreateDefault<T>()
+        public static IDictionary<string, Func<object, object>> CreateDefault(Type type)
         {
-            var type = typeof(T);
             var returnValue = new Dictionary<string, Func<object, object>>();
 
             foreach (var field in type.GetFields())

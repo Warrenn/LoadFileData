@@ -5,6 +5,6 @@ namespace LoadFileData.Converters
     [AttributeUsage(AttributeTargets.Method)]
     public class ConverterAttribute : Attribute
     {
-        public string SpecificName { get; set; }
+        public string Name { get; set; }
     }
 }

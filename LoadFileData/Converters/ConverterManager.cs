@@ -49,14 +49,14 @@ namespace LoadFileData.Converters
                     info.IsStatic &&
                     typeof(Delegate).IsAssignableFrom(info.ReturnType) &&
                     info.ReturnType.IsGenericType &&
-                    info.ReturnType.GenericTypeArguments.Count() == 2 &&
-                    info.ReturnType.GenericTypeArguments[0] == typeof(object)
+                    (info.ReturnType.GenericTypeArguments.Count() == 2) &&
+                    (info.ReturnType.GenericTypeArguments[0] == typeof(object))
                 let attr = info
                     .GetCustomAttributes(typeof(ConverterAttribute), false)
                     .FirstOrDefault() as ConverterAttribute
                 where attr != null
                 select new { attr, info }).ToDictionary(
-                    a => string.IsNullOrEmpty(a.attr.SpecificName) ? a.info.Name : a.attr.SpecificName,
+                    a => string.IsNullOrEmpty(a.attr.Name) ? a.info.Name : a.attr.Name,
                     a => a.info);
         }
 

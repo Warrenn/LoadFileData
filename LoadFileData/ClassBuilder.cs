@@ -44,7 +44,7 @@ namespace LoadFileData
             propertyName = char.ToUpperInvariant(propertyName[0]) + propertyName.Substring(1);
             var fieldName = char.ToLowerInvariant(propertyName[0]) + propertyName.Substring(1);
 
-            var customerNameBldr = builder.DefineField(fieldName, propertyType, FieldAttributes.Private);
+            var customFldBldr = builder.DefineField(fieldName, propertyType, FieldAttributes.Private);
 
             var custNamePropBldr = builder.DefineProperty(propertyName, PropertyAttributes.HasDefault,
                 propertyType, null);
@@ -59,18 +59,17 @@ namespace LoadFileData
             var custNameGetIl = custNameGetPropMthdBldr.GetILGenerator();
 
             custNameGetIl.Emit(OpCodes.Ldarg_0);
-            custNameGetIl.Emit(OpCodes.Ldfld, customerNameBldr);
+            custNameGetIl.Emit(OpCodes.Ldfld, customFldBldr);
             custNameGetIl.Emit(OpCodes.Ret);
 
             var custNameSetPropMthdBldr = builder.DefineMethod("set_" + propertyName, getSetAttr, null,
                 new[] { propertyType });
 
-
             var custNameSetIl = custNameSetPropMthdBldr.GetILGenerator();
 
             custNameSetIl.Emit(OpCodes.Ldarg_0);
             custNameSetIl.Emit(OpCodes.Ldarg_1);
-            custNameSetIl.Emit(OpCodes.Stfld, customerNameBldr);
+            custNameSetIl.Emit(OpCodes.Stfld, customFldBldr);
             custNameSetIl.Emit(OpCodes.Ret);
 
             custNamePropBldr.SetGetMethod(custNameGetPropMthdBldr);

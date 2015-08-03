@@ -3,11 +3,11 @@ using LoadFileData.ContentHandlers.Settings;
 
 namespace LoadFileData.ContentHandlers
 {
-    public class FixedIndexContentHandler<T> : ContentHandlerBase<T> where T : new()
+    public class FixedIndexContentHandler : ContentHandlerBase
     {
         private readonly IDictionary<int, string> fieldIndices;
 
-        public FixedIndexContentHandler(FixedIndexSettings<T> settings)
+        public FixedIndexContentHandler(FixedIndexSettings settings)
             : base(settings)
         {
             fieldIndices = settings.FieldIndices;

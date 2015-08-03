@@ -11,16 +11,16 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 
 namespace LoadFileData.FileHandlers
 {
-    public class FileHandler<T> : IFileHandler, IRecoverWorkflow where T : new()
+    public class FileHandler : IFileHandler, IRecoverWorkflow
     {
-        private readonly FileHandlerSettings<T> settings;
+        private readonly FileHandlerSettings settings;
         private readonly IDataService service;
         private readonly IContentReader reader;
-        private readonly IContentHandler<T> contentHandler;
+        private readonly IContentHandler contentHandler;
         private readonly string destinationPathTemplate;
         private readonly IStreamManager streamManager;
 
-        public FileHandler(FileHandlerSettings<T> settings)
+        public FileHandler(FileHandlerSettings settings)
         {
             this.settings = settings;
             contentHandler = settings.ContentHandler;
