@@ -23,7 +23,6 @@ namespace LoadFileData.Web
 
         #endregion
 
-
         public static IDictionary<string, string> AppSettingsFiles(string name)
         {
             var settingsFolder = ConfigurationManager.AppSettings[name];

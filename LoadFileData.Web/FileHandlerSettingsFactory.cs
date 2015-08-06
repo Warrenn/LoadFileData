@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using LoadFileData.ContentHandlers;
 using LoadFileData.ContentReaders;
 using LoadFileData.DAL;
@@ -10,14 +11,14 @@ using Newtonsoft.Json;
 
 namespace LoadFileData.Web
 {
-    public class FileHandlerFactory : IFileHandlerFactory
+    public class FileHandlerSettingsFactory : IFileHandlerSettingsFactory
     {
         private readonly IStreamManager streamManager;
         private readonly IDataService service;
         private readonly JsonConverter readerConverter;
         private readonly JsonConverter handlerConverter;
 
-        public FileHandlerFactory(
+        public FileHandlerSettingsFactory(
             IStreamManager streamManager,
             IDataService service,
             JsonConverter readerConverter,
@@ -32,7 +33,7 @@ namespace LoadFileData.Web
 
         #region Implementation of IFileHandlerFactory
 
-        public virtual IDictionary<string, IFileHandler> CreateFileHandlers()
+        public virtual IEnumerable<FileHandlerSettings> CreateFileHandlers()
         {
             var copyToTemplate = ConfigurationManager.AppSettings[Folders.CopyTo];
             if (string.IsNullOrEmpty(copyToTemplate))
@@ -41,14 +42,12 @@ namespace LoadFileData.Web
                     string.Format("AppSetting {0} must have a valid path template", Folders.CopyTo));
             }
 
-            var returnValue = new Dictionary<string, IFileHandler>();
 
-            foreach (var setting in ReadJsonSettings())
-            {
-                var name = Path.GetFileNameWithoutExtension(setting.Key);
-                var contentReader = JsonConvert.DeserializeObject<IContentReader>(setting.Value, readerConverter);
-                var contentHandler = JsonConvert.DeserializeObject<IContentHandler>(setting.Value, handlerConverter);
-                var fileHandlerSettings = new FileHandlerSettings
+            return from setting in ReadJsonSettings()
+                let name = Path.GetFileNameWithoutExtension(setting.Key)
+                let contentReader = JsonConvert.DeserializeObject<IContentReader>(setting.Value, readerConverter)
+                let contentHandler = JsonConvert.DeserializeObject<IContentHandler>(setting.Value, handlerConverter)
+                let fileHandlerSettings = new FileHandlerSettings
                 {
                     DestinationPathTemplate = copyToTemplate,
                     Service = service,
@@ -56,19 +55,12 @@ namespace LoadFileData.Web
                     Name = name,
                     ContentHandler = contentHandler,
                     Reader = contentReader
-                };
-                var fileHandler = new FileHandler(fileHandlerSettings);
-                if (string.IsNullOrEmpty(name))
-                {
-                    continue;
                 }
-                returnValue[name] = fileHandler;
-            }
-
-            return returnValue;
+                where !string.IsNullOrEmpty(name)
+                select fileHandlerSettings;
         }
 
-        protected virtual IDictionary<string,string> ReadJsonSettings()
+        protected virtual IDictionary<string, string> ReadJsonSettings()
         {
             return StreamManager.AppSettingsFiles(Folders.WatchDefinitons);
         }

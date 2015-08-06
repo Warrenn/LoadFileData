@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using LoadFileData.Converters;
@@ -49,7 +48,7 @@ namespace LoadFileData.Web
         protected virtual Type CreateTypeFromJson(string name, string jsonData)
         {
             var className = ScrubVariableName(name);
-            var builder = ClassBuilder.Build(className, typeof(DataEntry));
+            var builder = ClassBuilder.Build<DataEntry>(className);
             var properties = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonData);
 
             foreach (var property in properties)

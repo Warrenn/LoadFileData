@@ -11,8 +11,7 @@ namespace LoadFileData.Tests.MockFactory
         private readonly IDictionary<Guid, MethodInfo> genericMethods = new SortedDictionary<Guid, MethodInfo>();
         private static readonly MethodInfo ResolveMethodInfo = typeof(MockFactory).GetMethod("ResolveMock");
         private readonly IDictionary<Guid, Mock> mockCache = new SortedDictionary<Guid, Mock>();
-
-
+        
         public static bool IsMockeable(Type typeToMock)
         {
             if (typeToMock.IsInterface ||

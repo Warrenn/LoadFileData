@@ -5,13 +5,12 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using LoadFileData.Constants;
-using LoadFileData.FileHandlers;
 using LoadFileData.Properties;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 
-namespace LoadFileData.Monitors
+namespace LoadFileData.FileHandlers
 {
-    public class FolderMonitor : IDisposable, IMonitor
+    public class FolderMonitor : IDisposable
     {
         private readonly IFileHandler fileHandler;
         private readonly string path;
