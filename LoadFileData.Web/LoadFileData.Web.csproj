@@ -88,9 +88,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\Folders.cs" />
+    <Compile Include="ContentReaderFactory.cs" />
+    <Compile Include="ContentHandlerFactory.cs" />
     <Compile Include="FileHandlerSettingsFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IContentReaderFactory.cs" />
+    <Compile Include="IContentHandlerFactory.cs" />
     <Compile Include="ITypeMapFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceFactory.cs" />

@@ -15,19 +15,19 @@ namespace LoadFileData.Web
     {
         private readonly IStreamManager streamManager;
         private readonly IDataService service;
-        private readonly JsonConverter readerConverter;
-        private readonly JsonConverter handlerConverter;
+        private readonly IContentReaderFactory readerFactory;
+        private readonly IContentHandlerFactory handlerFactory;
 
         public FileHandlerSettingsFactory(
             IStreamManager streamManager,
             IDataService service,
-            JsonConverter readerConverter,
-            JsonConverter handlerConverter)
+            IContentReaderFactory readerFactory,
+            IContentHandlerFactory handlerFactory)
         {
             this.streamManager = streamManager;
             this.service = service;
-            this.readerConverter = readerConverter;
-            this.handlerConverter = handlerConverter;
+            this.readerFactory = readerFactory;
+            this.handlerFactory = handlerFactory;
         }
 
 
@@ -44,20 +44,20 @@ namespace LoadFileData.Web
 
 
             return from setting in ReadJsonSettings()
-                let name = Path.GetFileNameWithoutExtension(setting.Key)
-                let contentReader = JsonConvert.DeserializeObject<IContentReader>(setting.Value, readerConverter)
-                let contentHandler = JsonConvert.DeserializeObject<IContentHandler>(setting.Value, handlerConverter)
-                let fileHandlerSettings = new FileHandlerSettings
-                {
-                    DestinationPathTemplate = copyToTemplate,
-                    Service = service,
-                    StreamManager = streamManager,
-                    Name = name,
-                    ContentHandler = contentHandler,
-                    Reader = contentReader
-                }
-                where !string.IsNullOrEmpty(name)
-                select fileHandlerSettings;
+                   let name = Path.GetFileNameWithoutExtension(setting.Key)
+                   let contentReader = readerFactory.Create(setting.Value)
+                   let contentHandler = handlerFactory.Create(setting.Value)
+                   let fileHandlerSettings = new FileHandlerSettings
+                   {
+                       DestinationPathTemplate = copyToTemplate,
+                       Service = service,
+                       StreamManager = streamManager,
+                       Name = name,
+                       ContentHandler = contentHandler,
+                       Reader = contentReader
+                   }
+                   where !string.IsNullOrEmpty(name)
+                   select fileHandlerSettings;
         }
 
         protected virtual IDictionary<string, string> ReadJsonSettings()

@@ -1,61 +1,37 @@
 ﻿{
-    "Folders": {
-        "LISP_1_CSV_Fixed": {
-            "DefaultValues": {
-                "Date": "Regex:'/d{2}' | date"
-            },
-            "ContentHandlers": {
-                "LISP1": {
-                    "ContentType": "FixedWidth",
-                    "FieldWidths": [ 3, 5, 6, 7, 8 ],
-                    "Fields": [
-                        { "name": "Identity", "regex": "{identity}", "conversion": "System.Int32" },
-                        { "name": "Name", "regex": "{name}", "conversion": "uppercase" },
-                        { "name": "Date Of Birth", "regex": "{dob}", "conversion": "date:ddMMyyy" }
-                        //| to split calls
-                        //: to split call and parameters
-                        //, to split parameters
-                }
-            }
+    "filename.json": {
+        "xlsx": {
+            "sheet": "sheet1",
+            "range": "A1:?"
         },
-        "LISP_1_xls": {
-            "ContentHandlers": {
-                "LISP1": {
-                    "ContentType": "xls"
-                },
-                "LISP2": 
-                {
-                    "ContentType": "xls",
-                    "SheetName": "Sheet2",
-                    "HeaderLineNumber": 3,
-                    "Fields": [
-                        { "name": "Identity", "regex": "{identity}", "conversion": "int" },
-                        { "name": "Name", "regex": "{name}", "conversion": "First Last Uppercase" },
-                        { "name": "Age", "regex": "{age}", "conversion": "date:ddMMyyy" }
-                    ]
-                }
-            }
+        "regex": {
+            "column1": "colum1|c1",
+            "column2": "colum2|c2",
+            "column3": "colum3|c3"
         },
-        "LISP2_excel": {
-            "Content": [
-                {
-                    "ContentHandler": "LISP2",
-                    "ContentType": "xlsx"
-                }
-            ]
+        "DateType3": {
+            "column1": "toDate('yyy-mmm-dd')"
         },
-        "LISP2_csv": {
-            "ContentHandlers": [
-                {
-                    "ContentHandler": "LISP2",
-                    "ContentType": "CSV",
-                }
-            ]
+        "Settings": {
+            "ContentLineNumber": 2,
+            "HeaderLineNumber": 1
         }
     },
-        "BaseDir": "",
-        "Tenants": {
-            "a": [ "LISP2_fixed", "LISP2_excel" ],
-            "b": [ "LISP1_fixed" ]
+    "watchfoldername.json": {
+        "fixed": {
+            "RemoveWhiteSpace": true,
+            "Widths": [ 2, 4, 5 ]
+        },
+        "indicies": {
+            "column1": 1,
+            "column2": 2,
+            "column3": 3
+        },
+        "DateType4": {
+            "column1": "toDate('yyy-mmm-dd')"
+        },
+        "Settings": {
+            "ContentLineNumber": 2
         }
     }
+}

@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using LoadFileData.ContentReaders;
 using LoadFileData.Converters;
 using LoadFileData.DAL.Models;
 using LoadFileData.Tests.MockFactory;
+using LoadFileData.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json;
 
 namespace LoadFileData.Tests.Controllers
 {
@@ -61,6 +64,11 @@ namespace LoadFileData.Tests.Controllers
                 .HasPrecision(5, 3);
             base.OnModelCreating(modelBuilder);
         }
+    }
+
+    public struct custstruct
+    {
+        public int Aninteger { get; set; }
     }
 
     [TestClass]
@@ -204,9 +212,19 @@ namespace LoadFileData.Tests.Controllers
 
         }
 
+        
         [TestMethod]
         public void Testtr()
         {
+            var str = new custstruct{Aninteger = 454};
+            
+            int size = Marshal.SizeOf(str);
+            byte[] arr = new byte[size];
+
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(str, ptr, true);
+            Marshal.Copy(ptr, arr, 0, size);
+            Marshal.FreeHGlobal(ptr);
 
         }
 
@@ -276,8 +294,34 @@ namespace LoadFileData.Tests.Controllers
         public void Testttt()
         {
             dynamic proxy = new GenericInvoker(typeof(TryParser));
-            var datetime = proxy.Default(new[] { typeof(DateTime) }, "201O-08-14");
+            var datetime = proxy.Nullable(new[] { typeof(DateTime) }, "2010-08-14");
             Assert.AreEqual(new DateTime(2010, 8, 14), datetime);
+        }
+
+        [TestMethod]
+        public void JsonConverter()
+        {
+            var ret = new ContentReaderFactory();
+            var e = ret.Create("{" +
+                       "	\"xlsx\":{" +
+                       //"		\"CommentStrings\":[\"'\"]," +
+                       //"		\"Delimiters\":[\",\",\"|\"]," +
+                       //"		\"RemoveWhiteSpace\":true" +
+                       "	}," +
+                       "	\"regex\":{" +
+                       "		\"column1\":\"colum1|c1\"," +
+                       "		\"column2\":\"colum2|c2\"," +
+                       "		\"column3\":\"colum3|c3\"" +
+                       "	}," +
+                       "	\"DateType3\":{" +
+                       "		\"column1\":\"toDate('yyy-mmm-dd')\"" +
+                       "	}," +
+                       "	\"Settings\":{" +
+                       "		\"ContentLineNumber\" : 2," +
+                       "		\"HeaderLineNumber\":1" +
+                       "	}" +
+                       "}");
+            Assert.IsNotNull(ret);
         }
 
         [TestMethod]
