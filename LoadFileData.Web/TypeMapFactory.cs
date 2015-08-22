@@ -68,7 +68,7 @@ namespace LoadFileData.Web
         {
             var dataEntryTypes = AssemblyHelper
                 .LoadableTypesOf<DataEntry>()
-                .ToDictionary(loadableType => loadableType.Name);
+                .ToDictionary(loadableType => loadableType.Name, StringComparer.InvariantCultureIgnoreCase);
 
             foreach (var setting in ReadJsonSettings())
             {

@@ -183,6 +183,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UnitTestContentHandlerFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config">

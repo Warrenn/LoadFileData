@@ -47,17 +47,17 @@ namespace LoadFileData.Converters
                 where
                     info.IsPublic &&
                     info.IsStatic &&
-                    typeof(Delegate).IsAssignableFrom(info.ReturnType) &&
+                    typeof (Delegate).IsAssignableFrom(info.ReturnType) &&
                     info.ReturnType.IsGenericType &&
                     (info.ReturnType.GenericTypeArguments.Count() == 2) &&
-                    (info.ReturnType.GenericTypeArguments[0] == typeof(object))
+                    (info.ReturnType.GenericTypeArguments[0] == typeof (object))
                 let attr = info
-                    .GetCustomAttributes(typeof(ConverterAttribute), false)
+                    .GetCustomAttributes(typeof (ConverterAttribute), false)
                     .FirstOrDefault() as ConverterAttribute
                 where attr != null
-                select new { attr, info }).ToDictionary(
+                select new {attr, info}).ToDictionary(
                     a => string.IsNullOrEmpty(a.attr.Name) ? a.info.Name : a.attr.Name,
-                    a => a.info);
+                    a => a.info, StringComparer.InvariantCultureIgnoreCase);
         }
 
         public static Type LookupType(string typeString)

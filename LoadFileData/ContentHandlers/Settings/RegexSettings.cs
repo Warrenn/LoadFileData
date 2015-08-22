@@ -8,13 +8,6 @@ namespace LoadFileData.ContentHandlers.Settings
     {
         public int HeaderLineNumber { get; set; }
         public IDictionary<string, string> FieldExpressions { get; set; }
-        public RegexSettings()
-        {
-            HeaderLineNumber = 1;
-            ContentLineNumber = 2;
-            FieldExpressions = new Dictionary<string, string>();
-        }
-
         public RegexSettings(Type type)
             : base(type)
         {

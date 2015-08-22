@@ -33,5 +33,10 @@
         "Settings": {
             "ContentLineNumber": 2
         }
+    },
+    "minimum.json": {
+        "fixed": { },
+        "indicies": { },
+        "DateType4": { }
     }
 }

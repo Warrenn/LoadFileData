@@ -7,18 +7,13 @@ namespace LoadFileData.ContentHandlers.Settings
     public class FixedIndexSettings : ContentHandlerSettings
     {
         public IDictionary<int, string> FieldIndices { get; set; }
-        public FixedIndexSettings()
-        {
-            FieldIndices = new Dictionary<int, string>();
-            ContentLineNumber = 1;
-        }
 
         public FixedIndexSettings(Type type)
             : base(type)
         {
-            var index = -1;
+            var index = 1;
             FieldIndices = type
-                .GetFields()
+                .GetProperties()
                 .ToDictionary(f => index++, f => f.Name);
             ContentLineNumber = 1;
         }

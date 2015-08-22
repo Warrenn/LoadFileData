@@ -80,7 +80,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ContentHandlers\Settings\ContentHandlerSettings.cs" />
-    <Compile Include="ContentHandlers\Settings\FieldConversionFactory.cs" />
+    <Compile Include="ContentHandlers\Settings\PropertyConversionFactory.cs" />
     <Compile Include="ContentHandlers\Settings\FixedIndexSettings.cs" />
     <Compile Include="ContentHandlers\Settings\RegexSettings.cs" />
     <Compile Include="ContentReaders\DelimiteredReader.cs">

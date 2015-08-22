@@ -5,7 +5,7 @@ using LoadFileData.ContentHandlers.Settings;
 
 namespace LoadFileData.ContentHandlers
 {
-    public class RegexContentHandler<T> : ContentHandlerBase
+    public class RegexContentHandler : ContentHandlerBase
     {
 
         private readonly IDictionary<string, string> fieldExpressions;
