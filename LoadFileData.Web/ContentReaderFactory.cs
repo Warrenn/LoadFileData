@@ -32,7 +32,7 @@ namespace LoadFileData.Web
                         })
                 },
                 {
-                    "delimitered", dict =>
+                    "csv", dict =>
                         new DelimiteredReader(new DelimitedSettings
                         {
                             CommentStrings = Array<string>(dict.CommentStrings, "\"", "'"),

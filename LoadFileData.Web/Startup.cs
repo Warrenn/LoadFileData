@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Threading;
@@ -8,7 +7,6 @@ using LoadFileData.FileHandlers;
 using LoadFileData.Web;
 using LoadFileData.Web.Constants;
 using Microsoft.Owin;
-using Microsoft.Owin.Logging;
 using Microsoft.Practices.Unity;
 using Owin;
 
