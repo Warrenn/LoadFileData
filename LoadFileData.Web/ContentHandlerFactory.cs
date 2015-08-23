@@ -135,7 +135,9 @@ namespace LoadFileData.Web
 
             foreach (var pair in properties)
             {
-                var propertyInfo = typeof(ContentHandlerSettings).GetProperty(pair.Key);
+                var propertyInfo = settings
+                    .GetType()
+                    .GetProperty(pair.Key);
                 if (propertyInfo == null)
                 {
                     continue;

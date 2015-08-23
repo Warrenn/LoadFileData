@@ -12,8 +12,8 @@ namespace LoadFileData.ContentHandlers.Settings
             : base(type)
         {
             FieldExpressions = type
-                .GetFields()
-                .ToDictionary(f => f.Name, f => f.Name);
+                .GetProperties()
+                .ToDictionary(f => f.Name, f => f.Name, StringComparer.InvariantCultureIgnoreCase);
             HeaderLineNumber = 1;
             ContentLineNumber = 2;
         }

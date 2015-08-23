@@ -171,7 +171,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\UnitTest1.cs" />
     <Compile Include="MockFactory\CustomFactoryBuildStrategy.cs" />
     <Compile Include="MockFactory\MockHelper.cs" />
     <Compile Include="MockFactory\FactoryUnityExtension.cs" />
@@ -183,7 +182,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="UnitTestContentHandlerFactory.cs" />
+    <Compile Include="FixedindexSettingsUnitTest.cs" />
+    <Compile Include="PropertyConversionUnitTest.cs" />
+    <Compile Include="ContentHandlerFactoryUnitTest.cs" />
+    <Compile Include="FixedIndexContentHandlerUnitTest.cs" />
+    <Compile Include="RegexContentHandlerUnitTest.cs" />
+    <Compile Include="ExcelRangeFactoryUnitTest.cs" />
+    <Compile Include="DelimeteredReaderUnitTest.cs" />
+    <Compile Include="FixedReaderUnitTest.cs" />
+    <Compile Include="ConverterManagerUnitTest.cs" />
+    <Compile Include="XlsxReaderUnitTest.cs" />
+    <Compile Include="XlsReaderUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config">

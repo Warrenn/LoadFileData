@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using LoadFileData.ContentHandlers;
 using LoadFileData.Converters;
 using LoadFileData.Tests.Controllers;
 using LoadFileData.Tests.MockFactory;
@@ -11,7 +12,7 @@ using Moq;
 namespace LoadFileData.Tests
 {
     [TestClass]
-    public class UnitTestContentHandlerFactory
+    public class ContentHandlerFactoryUnitTest
     {
         public class TestClass
         {
@@ -29,6 +30,7 @@ namespace LoadFileData.Tests
         [TestMethod]
         public void CreateMustCreateHandlerSucessfully()
         {
+            //Arrange
             var helper = new MockHelper();
             var mockTypeMapFactory = helper.Mock<ITypeMapFactory>();
             mockTypeMapFactory
@@ -38,6 +40,8 @@ namespace LoadFileData.Tests
                     {"DateType3", typeof (TestClass)}
                 });
             var sut = helper.Instance<ContentHandlerFactory>();
+
+            //Act
             var handler = sut.Create("{" +
                        "    \"fixed\": {" +
                        "        \"RemoveWhiteSpace\": true," +
@@ -55,6 +59,35 @@ namespace LoadFileData.Tests
                        "        \"ContentLineNumber\": 2" +
                        "    }" +
                        "}");
+
+            //Assert
+            Assert.IsInstanceOfType(handler, typeof(FixedIndexContentHandler));
+            Assert.IsNotNull(handler);
+        }
+
+        [TestMethod]
+        public void MinimumSettingsMustBeCreatedSucessfully()
+        {
+            //Arrange
+            var helper = new MockHelper();
+            var mockTypeMapFactory = helper.Mock<ITypeMapFactory>();
+            mockTypeMapFactory
+                .Setup(f => f.CreateTypeMap())
+                .Returns(new Dictionary<string, Type>
+                {
+                    {"DateType3", typeof (TestClass)}
+                });
+            var sut = helper.Instance<ContentHandlerFactory>();
+
+            //Act
+            var handler = sut.Create("{" +
+                       "    \"csv\": {}," +
+                       "    \"regex\": {}," +
+                       "    \"DateType3\": {}," +
+                       "}");
+
+            //Assert
+            Assert.IsInstanceOfType(handler, typeof(RegexContentHandler));
             Assert.IsNotNull(handler);
         }
     }

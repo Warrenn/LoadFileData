@@ -154,7 +154,6 @@
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Settings.json" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

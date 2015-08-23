@@ -32,8 +32,7 @@ namespace LoadFileData.ContentReaders
                 }
             }
         }
-
-
+        
         public int RowCount(Stream fileStream)
         {
             fileStream.Seek(0, SeekOrigin.Begin);

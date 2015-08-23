@@ -21,7 +21,7 @@ namespace LoadFileData.ContentReaders
 
         public static string[] SplitLine(string line, params string[] delimiters)
         {
-            return Split(line, delimiterStrings: delimiters, commentStrings: new[] {"\"", "'"});
+            return Split(line, delimiterStrings: delimiters, commentStrings: DelimitedSettings.DefaultComments);
         }
 
         private static string CreateRegexPattern(
@@ -29,11 +29,11 @@ namespace LoadFileData.ContentReaders
             string[] commentStrings)
         {
             var delimiters = ((delimiterStrings == null) || (delimiterStrings.Length == 0))
-                ? @"\|,"
+                ? DelimitedSettings.DefaultDelimitersString
                 : string.Concat(delimiterStrings);
 
             var comments = ((commentStrings == null) || (commentStrings.Length == 0))
-                ? @"""'"
+                ? DelimitedSettings.DefaultCommentsString
                 : string.Concat(commentStrings);
 
             return @"[" + delimiters + @"](?=(?:[^" + comments + @"]*[" + comments + @"][^" + comments +
@@ -46,6 +46,8 @@ namespace LoadFileData.ContentReaders
             string[] delimiterStrings = null,
             string[] commentStrings = null)
         {
+            commentStrings = commentStrings ?? DelimitedSettings.DefaultComments;
+            delimiterStrings = delimiterStrings ?? DelimitedSettings.DefaultDelimiters;
             var trimChars = trim ? GetTrimChars(commentStrings) : null;
             var regexPattern = CreateRegexPattern(delimiterStrings, commentStrings);
             return Split(line, regexPattern, trimChars, commentStrings);

@@ -32,7 +32,7 @@ namespace LoadFileData.ContentReaders.Settings
                 column = 0;
                 for (var i = 0; i < columnString.Length; i++)
                 {
-                    column += (columnString[i] - '@')*(10 ^ (powerOf - i));
+                    column += (columnString[i] - '@') * (int)(Math.Pow(26, powerOf - i));
                 }
                 if (column < 1)
                 {
