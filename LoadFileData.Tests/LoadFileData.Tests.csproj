@@ -182,14 +182,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="FixedindexSettingsUnitTest.cs" />
-    <Compile Include="PropertyConversionUnitTest.cs" />
     <Compile Include="ContentHandlerFactoryUnitTest.cs" />
     <Compile Include="FixedIndexContentHandlerUnitTest.cs" />
     <Compile Include="RegexContentHandlerUnitTest.cs" />
     <Compile Include="ExcelRangeFactoryUnitTest.cs" />
     <Compile Include="DelimeteredReaderUnitTest.cs" />
-    <Compile Include="FixedReaderUnitTest.cs" />
+    <Compile Include="FixedWidthReaderUnitTest.cs" />
     <Compile Include="ConverterManagerUnitTest.cs" />
     <Compile Include="XlsxReaderUnitTest.cs" />
     <Compile Include="XlsReaderUnitTest.cs" />
@@ -198,7 +196,8 @@
     <Content Include="App.config">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="Resources\uac.txt" />
+    <None Include="Resources\Test.xls" />
+    <None Include="Resources\Test.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -207,6 +206,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

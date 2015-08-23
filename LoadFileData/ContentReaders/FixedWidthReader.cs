@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using LoadFileData.ContentReaders.Settings;
 
 namespace LoadFileData.ContentReaders
@@ -11,7 +12,7 @@ namespace LoadFileData.ContentReaders
         public FixedWidthReader(FixedWidthSettings settings) : base(settings)
         {
             removeWhitespace = settings.RemoveWhiteSpace;
-            fieldWidths = settings.FieldWidths;
+            fieldWidths = settings.FieldWidths.OrderBy(i => i).ToArray();
         }
 
         public override IEnumerable<string> ReadRowValues(string line)

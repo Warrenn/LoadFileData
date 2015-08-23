@@ -43,7 +43,7 @@ namespace LoadFileData.ContentReaders
                 var rowValues = new List<object>();
                 for (var colNo = colStartNo; colNo <= colEndNo; colNo++)
                 {
-                    rowValues.Add(worksheet.Cells[rowNo, colNo]);
+                    rowValues.Add(worksheet.Cells[rowNo, colNo].Value);
                 }
                 yield return rowValues;
             }

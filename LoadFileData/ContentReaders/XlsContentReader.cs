@@ -37,7 +37,7 @@ namespace LoadFileData.ContentReaders
                 yield break;
             }
 
-            for (var rowIndex = rowStartIndex; rowIndex < rowEndIndex; rowIndex++)
+            for (var rowIndex = rowStartIndex; rowIndex <= rowEndIndex; rowIndex++)
             {
                 var returnArray = new object[(colEndIndex - colStartIndex) + 1];
                 table.Rows[rowIndex].ItemArray.CopyTo(returnArray, colStartIndex);

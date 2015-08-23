@@ -17,19 +17,11 @@ namespace LoadFileData.Web
             {
                 {
                     "xlsx", dict =>
-                        new XlsxContentReader(new ExcelSettings
-                        {
-                            Range = ExcelRangeFactory.CreateRange(dict.Range ?? "1A:?"),
-                            Sheet = dict.Sheet ?? "Sheet1"
-                        })
+                        new XlsxContentReader(new ExcelSettings(dict.Range, dict.Sheet))
                 },
                 {
                     "xls", dict =>
-                        new XlsContentReader(new ExcelSettings
-                        {
-                            Range = ExcelRangeFactory.CreateRange(dict.Range ?? "1A:?"),
-                            Sheet = dict.Sheet ?? "Sheet1"
-                        })
+                        new XlsContentReader(new ExcelSettings(dict.Range, dict.Sheet))
                 },
                 {
                     "fixed", dict =>
