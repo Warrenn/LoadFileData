@@ -48,7 +48,7 @@ namespace LoadFileData.Tests
             //Arrange
             var settings = new ExcelSettings();
             var reader = new XlsxContentReader(settings);
-            var memoryStream = new MemoryStream(Resources.Test_xls);
+            var memoryStream = new MemoryStream(Resources.Test_xlsx);
 
             //Act
             var actual = reader.RowCount(memoryStream);
