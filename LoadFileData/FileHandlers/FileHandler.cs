@@ -91,7 +91,7 @@ namespace LoadFileData.FileHandlers
             }
         }
 
-        public void ProcessFile(FileSource fileSource, ContentHandlerContext context, CancellationToken token)
+        private void ProcessFile(FileSource fileSource, ContentHandlerContext context, CancellationToken token)
         {
             var rowCount = 1;
             service.MarkFileExtracting(fileSource);
