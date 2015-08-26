@@ -46,29 +46,21 @@ namespace LoadFileData.Web
             () =>
                 (from info in typeof(ContentHandlerFactory).GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
                  let parameters = info.GetParameters()
-                 where
-                     (info.IsStatic &&
-                      info.ReturnType == typeof(IContentHandler) &&
-                      parameters.Count() == 2)
-                 select new
-                 {
-                     info,
-                     parameters
-                 }).ToDictionary(m => m.info.Name, m => new CreateMethods
+                 where(info.IsStatic && info.ReturnType == typeof(IContentHandler) && parameters.Count() == 2)
+                 select new{info,parameters})
+                 .ToDictionary(m => m.info.Name, m => new CreateMethods
                     {
-                        CreateDictionary =
-                            (reader, serializer) => serializer.Deserialize(reader, m.parameters[1].ParameterType),
+                        CreateDictionary =(reader, serializer) => serializer.Deserialize(reader, m.parameters[1].ParameterType),
                         CreateHandler = (settings, o) => (IContentHandler)m.info.Invoke(null, new[] { settings, o }),
-                        CreateSettings =
-                            type => (ContentHandlerSettings)Activator.CreateInstance(m.parameters[0].ParameterType, type)
+                        CreateSettings =type => (ContentHandlerSettings)Activator.CreateInstance(m.parameters[0].ParameterType, type)
                     }, StringComparer.InvariantCultureIgnoreCase)
             );
 
         private readonly IDictionary<string, Type> typeMap;
 
-        public ContentHandlerFactory(ITypeMapFactory typeMapFactory)
+        public ContentHandlerFactory(IDictionary<string, Type> typeMap)
         {
-            typeMap = typeMapFactory.CreateTypeMap();
+            this.typeMap = typeMap;
         }
         #region Implementation of IFileHandlerFactory
 
