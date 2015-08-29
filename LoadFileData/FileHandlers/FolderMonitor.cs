@@ -6,7 +6,6 @@ using System.Reactive.Linq;
 using System.Threading;
 using LoadFileData.Constants;
 using LoadFileData.Properties;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 
 namespace LoadFileData.FileHandlers
 {
@@ -93,7 +92,7 @@ namespace LoadFileData.FileHandlers
                         return;
                     }
                     fileHandler.ReportError(fullPath, ex);
-                    ExceptionPolicy.HandleException(ex, PolicyName.FolderMonitor);
+                    ExceptionHandler.HandleException(ex, PolicyName.FolderMonitor);
                     return;
                 }
                 try
