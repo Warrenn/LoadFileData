@@ -9,9 +9,9 @@ namespace LoadFileData.Web
     {
         private readonly IDictionary<string, Type> typeMap;
 
-        public ServiceFactory(IDictionary<string,Type> typeMap)
+        public ServiceFactory(ITypeMapFactory typeMapFactory)
         {
-            this.typeMap = typeMap;
+            typeMap = typeMapFactory.CreateTypeMap();
         }
 
         public IDataService Create()

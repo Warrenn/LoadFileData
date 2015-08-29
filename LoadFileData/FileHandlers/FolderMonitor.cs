@@ -42,6 +42,7 @@ namespace LoadFileData.FileHandlers
             {
                 OnNext(e, token);
             });
+            token.Register(Dispose);
         }
 
         public virtual void StopMonitoring()
@@ -70,7 +71,6 @@ namespace LoadFileData.FileHandlers
 
             if (token.IsCancellationRequested)
             {
-                StopMonitoring();
                 return;
             }
             RetryScheduler.Schedule(0, TimeSpan.Zero, (state, recurse) =>
@@ -103,18 +103,13 @@ namespace LoadFileData.FileHandlers
                 catch (Exception ex)
                 {
                     fileHandler.ReportError(fullPath, ex);
-                    ExceptionPolicy.HandleException(ex, PolicyName.FolderMonitor);
+                    ExceptionHandler.HandleException(ex, PolicyName.FolderMonitor);
                 }
                 finally
                 {
                     stream.Dispose(PolicyName.Disposable);
                 }
             });
-            if (!token.IsCancellationRequested)
-            {
-                return;
-            }
-            StopMonitoring();
         }
 
         internal virtual IScheduler RetryScheduler

@@ -7,7 +7,6 @@ using LoadFileData.ContentHandlers;
 using LoadFileData.ContentReaders;
 using LoadFileData.DAL;
 using LoadFileData.DAL.Models;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 
 namespace LoadFileData.FileHandlers
 {
@@ -87,7 +86,7 @@ namespace LoadFileData.FileHandlers
             catch (Exception ex)
             {
                 service.LogError(fileSource, ex);
-                ExceptionPolicy.HandleException(ex, GetType().Name);
+                ExceptionHandler.HandleException(ex, GetType().Name);
             }
         }
 

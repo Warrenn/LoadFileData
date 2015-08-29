@@ -50,18 +50,19 @@ namespace LoadFileData.Web
                  select new{info,parameters})
                  .ToDictionary(m => m.info.Name, m => new CreateMethods
                     {
-                        CreateDictionary =(reader, serializer) => serializer.Deserialize(reader, m.parameters[1].ParameterType),
+                        CreateDictionary = (reader, serializer) => serializer.Deserialize(reader, m.parameters[1].ParameterType),
                         CreateHandler = (settings, o) => (IContentHandler)m.info.Invoke(null, new[] { settings, o }),
-                        CreateSettings =type => (ContentHandlerSettings)Activator.CreateInstance(m.parameters[0].ParameterType, type)
+                        CreateSettings = type => (ContentHandlerSettings)Activator.CreateInstance(m.parameters[0].ParameterType, type)
                     }, StringComparer.InvariantCultureIgnoreCase)
             );
 
         private readonly IDictionary<string, Type> typeMap;
 
-        public ContentHandlerFactory(IDictionary<string, Type> typeMap)
+        public ContentHandlerFactory(ITypeMapFactory typeMapFactory)
         {
-            this.typeMap = typeMap;
+            typeMap = typeMapFactory.CreateTypeMap();
         }
+
         #region Implementation of IFileHandlerFactory
 
         public IContentHandler Create(string jsonData)
