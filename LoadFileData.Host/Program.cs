@@ -22,6 +22,7 @@ namespace LoadFileData.Host
         private static NotifyIcon notificationIcon;
         private static string url;
 
+        [STAThread]
         private static void Main(string[] args)
         {
 
@@ -35,8 +36,8 @@ namespace LoadFileData.Host
                 menu = new ContextMenu();
                 mnuExit = new MenuItem("Exit");
                 mnuShow = new MenuItem("Show");
-                menu.MenuItems.Add(0, mnuExit);
-                menu.MenuItems.Add(1, mnuShow);
+                menu.MenuItems.Add(0, mnuShow);
+                menu.MenuItems.Add(1, mnuExit);
 
                 notificationIcon = new NotifyIcon
                 {
