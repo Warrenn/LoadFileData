@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Threading;
@@ -19,54 +18,35 @@ namespace LoadFileData.Web
 {
     public class Startup
     {
-        private static IEnumerable<HandlerMonitors> handlers;
-
-        public struct HandlerMonitors
+        public void Configuration(IAppBuilder app)
         {
-            public FolderMonitor Monitor { get; set; }
-            public IRecoverWorkflow Handler { get; set; }
-        }
+#if DEBUG
+            app.UseErrorPage();
+#endif
+            app.UseWelcomePage("/");
 
-        public static IEnumerable<HandlerMonitors> StartUpMonitors(IFileHandlerSettingsFactory factory)
-        {
+            var container = UnityConfig.Container;
+            var factory = container.Resolve<IFileHandlerSettingsFactory>();
+            var properties = new AppProperties(app.Properties);
+            var token = properties.OnAppDisposing;
             var watchFolderTemplate = ConfigurationManager.AppSettings[Folders.WatchBase];
             foreach (var handlerSetting in factory.CreateFileHandlers())
             {
-
                 var fileHandler = new FileHandler(handlerSetting);
                 var watchFolder = string.Format(watchFolderTemplate, handlerSetting.Name);
                 if (!Directory.Exists(watchFolder))
                 {
                     Directory.CreateDirectory(watchFolder);
                 }
-                yield return new HandlerMonitors
+                var monitor = new FolderMonitor(watchFolder, fileHandler);
+                if (HostingEnvironment.IsHosted)
                 {
-                    Handler = fileHandler,
-                    Monitor = new FolderMonitor(watchFolder, fileHandler)
-                };
-            }
-        }
-
-        public void Configuration(IAppBuilder app)
-        {
-            var container = UnityConfig.Container;
-            handlers = StartUpMonitors(container.Resolve<IFileHandlerSettingsFactory>());
-            if (HostingEnvironment.IsHosted)
-            {
-                foreach (var handler in handlers)
-                {
-                    HostingEnvironment.QueueBackgroundWorkItem((Action<CancellationToken>) handler.Handler.RecoverExistingFiles);
-                    HostingEnvironment.QueueBackgroundWorkItem((Action<CancellationToken>) handler.Monitor.StartMonitoring);
+                    HostingEnvironment.QueueBackgroundWorkItem((Action<CancellationToken>)fileHandler.RecoverExistingFiles);
+                    HostingEnvironment.QueueBackgroundWorkItem((Action<CancellationToken>)monitor.StartMonitoring);
+                    continue;
                 }
-                return;
-            }
-            var properties = new AppProperties(app.Properties);
-            var token = properties.OnAppDisposing;
-            foreach (var handler in handlers)
-            {
-                var handlerMonitors = handler;
-                Task.Run(() => handlerMonitors.Handler.RecoverExistingFiles(token), token);
-                Task.Run(() => handlerMonitors.Monitor.StartMonitoring(token), token);
+                Task.Run(() => fileHandler.RecoverExistingFiles(token), token);
+                Task.Run(() => monitor.StartMonitoring(token), token);
             }
         }
     }

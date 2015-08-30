@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using LoadFileData.FileHandlers;
-using LoadFileData.Web.Constants;
 
 namespace LoadFileData.Web
 {
@@ -13,6 +11,15 @@ namespace LoadFileData.Web
 
         public void CopyFile(string source, string destination)
         {
+            var path = Path.GetDirectoryName(destination);
+            if (string.IsNullOrEmpty(path))
+            {
+                return;
+            }
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
             File.Copy(source, destination, true);
         }
 

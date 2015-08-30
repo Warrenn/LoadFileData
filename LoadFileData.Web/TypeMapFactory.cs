@@ -11,12 +11,7 @@ namespace LoadFileData.Web
 {
     public class TypeMapFactory : ITypeMapFactory
     {
-        private readonly Lazy<IDictionary<string, Type>> lazyTypeMap;
-
-        public TypeMapFactory()
-        {
-            lazyTypeMap = new Lazy<IDictionary<string, Type>>(CreateTypeMapInternal);
-        }
+        private static readonly Lazy<IDictionary<string, Type>> lazyTypeMap = new Lazy<IDictionary<string, Type>>(CreateTypeMapInternal);
 
         public static string ScrubVariableName(string variableName)
         {
@@ -40,12 +35,12 @@ namespace LoadFileData.Web
             return new string(value);
         }
 
-        protected virtual IDictionary<string, string> ReadJsonSettings()
+        private static IDictionary<string, string> ReadJsonSettings()
         {
             return StreamManager.AppSettingsFiles(Folders.DataEntries);
         }
 
-        protected virtual Type CreateTypeFromJson(string name, string jsonData)
+        private static Type CreateTypeFromJson(string name, string jsonData)
         {
             var className = ScrubVariableName(name);
             var builder = ClassBuilder.Build<DataEntry>(className);
@@ -64,7 +59,7 @@ namespace LoadFileData.Web
             return builder.ToType();
         }
 
-        protected virtual IDictionary<string, Type> CreateTypeMapInternal()
+        private static IDictionary<string, Type> CreateTypeMapInternal()
         {
             var dataEntryTypes = AssemblyHelper
                 .LoadableTypesOf<DataEntry>()
@@ -73,11 +68,12 @@ namespace LoadFileData.Web
             foreach (var setting in ReadJsonSettings())
             {
                 var name = Path.GetFileNameWithoutExtension(setting.Key);
-                if (string.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name) ||
+                    (dataEntryTypes.ContainsKey(name)))
                 {
                     continue;
                 }
-                var type = CreateTypeFromJson(setting.Key, setting.Value);
+                var type = CreateTypeFromJson(name, setting.Value);
                 dataEntryTypes[name] = type;
             }
             return dataEntryTypes;

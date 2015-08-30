@@ -17,12 +17,12 @@ namespace LoadFileData.Web
 
         public FileHandlerSettingsFactory(
             IStreamManager streamManager,
-            IDataService service,
+            IServiceFactory serviceFactory,
             IContentReaderFactory readerFactory,
             IContentHandlerFactory handlerFactory)
         {
             this.streamManager = streamManager;
-            this.service = service;
+            service = serviceFactory.Create();
             this.readerFactory = readerFactory;
             this.handlerFactory = handlerFactory;
         }

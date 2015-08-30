@@ -51,7 +51,7 @@ namespace LoadFileData.FileHandlers
         {
             var newGuid = Guid.NewGuid();
             var fileType = Path.GetExtension(fullPath);
-            var destination = string.Format(destinationPathTemplate, newGuid, fileType);
+            var destination = string.Format(destinationPathTemplate, settings.Name, newGuid, fileType);
             streamManager.CopyFile(fullPath, destination);
             var hash = GetHash(stream);
             var fileSource = new FileSource
@@ -74,7 +74,7 @@ namespace LoadFileData.FileHandlers
                     return;
                 }
                 var totalRows = reader.RowCount(stream);
-                service.UpdateTotalRows(newGuid, totalRows);
+                service.UpdateTotalRows(fileSource, totalRows);
                 var enumerator = reader.ReadContent(stream);
                 var context = new ContentHandlerContext
                 {

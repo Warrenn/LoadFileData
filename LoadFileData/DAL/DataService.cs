@@ -68,11 +68,10 @@ namespace LoadFileData.DAL
             });
         }
 
-        public void UpdateTotalRows(Guid fileId, int totalRows)
+        public void UpdateTotalRows(FileSource fileSource, int totalRows)
         {
-            var entry = context.FileSources.Find(fileId);
-            entry.TotalRows = totalRows;
-            context.FileSources.AddOrUpdate(entry);
+            fileSource.TotalRows = totalRows;
+            context.FileSources.AddOrUpdate(fileSource);
             ExceptionHandler.Try(() =>
             {
                 context.SaveChanges();
