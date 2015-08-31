@@ -11,7 +11,7 @@ namespace LoadFileData.Web
     public class FileHandlerSettingsFactory : IFileHandlerSettingsFactory
     {
         private readonly IStreamManager streamManager;
-        private readonly IDataService service;
+        private readonly IServiceFactory serviceFactory;
         private readonly IContentReaderFactory readerFactory;
         private readonly IContentHandlerFactory handlerFactory;
 
@@ -22,7 +22,7 @@ namespace LoadFileData.Web
             IContentHandlerFactory handlerFactory)
         {
             this.streamManager = streamManager;
-            service = serviceFactory.Create();
+            this.serviceFactory = serviceFactory;
             this.readerFactory = readerFactory;
             this.handlerFactory = handlerFactory;
         }
@@ -47,7 +47,7 @@ namespace LoadFileData.Web
                    let fileHandlerSettings = new FileHandlerSettings
                    {
                        DestinationPathTemplate = copyToTemplate,
-                       Service = service,
+                       ServiceFactory = serviceFactory,
                        StreamManager = streamManager,
                        Name = name,
                        ContentHandler = contentHandler,

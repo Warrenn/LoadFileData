@@ -38,7 +38,7 @@
     <PublishDatabaseSettings>
       <Objects>
         <ObjectGroup Name="WebDbContext" Order="1" xmlns="">
-          <Destination Path="Data Source=%28LocalDB%29\v11.0%3bAttachDbFilename=|DataDirectory|\LoadFileData.mdf%3bIntegrated Security=True%3bConnect Timeout=30" />
+          <Destination Path="Data Source=%28LocalDB%29\v11.0%3bInitial Catalog=|DataDirectory|\LoadFileData.mdf%3bIntegrated Security=True%3bConnect Timeout=30" />
         </ObjectGroup>
       </Objects>
     </PublishDatabaseSettings>
@@ -178,6 +178,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\PlaceHolder.txt" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -233,18 +234,18 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>53649</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:53649/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
-          <UseCustomServer>True</UseCustomServer>
+          <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
           </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
-          <servers defaultServer="OwinHost">
-            <server name="OwinHost" exePath="{solutiondir}\LoadFileData.Host\bin\Debug\LoadFileData.Host.exe" cmdArgs="-u {url}" url="http://localhost:12345/" workingDir="{projectdir}" />
+          <servers defaultServer="">
+            <server name="OwinHost" exePath="{solutiondir}\packages\OwinHost.3.0.1\tools\OwinHost.exe" cmdArgs="-u {url}" url="http://localhost:12345/" workingDir="{projectdir}" />
           </servers>
         </WebProjectProperties>
       </FlavorProperties>

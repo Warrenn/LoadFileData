@@ -21,7 +21,7 @@ namespace LoadFileData
             Try(disposable.Dispose, policyName, () => { disposable = null; });
         }
 
-        public static bool HandleException(Exception exception, string policyName)
+        public static bool HandleException(Exception exception, string policyName = null)
         {
             Exception rethrowException;
             return HandleException(exception, policyName, out rethrowException);
@@ -30,8 +30,9 @@ namespace LoadFileData
         public static bool HandleException(Exception exception, string policyName, out Exception rethrowException)
         {
             rethrowException = null;
-            policyName = string.IsNullOrEmpty(policyName) ? PolicyName.Default : policyName;
-            if ((Settings != null) && (Settings.ExceptionPolicies.Contains(policyName)))
+            if (!string.IsNullOrEmpty(policyName) &&
+                (Settings != null) &&
+                (Settings.ExceptionPolicies.Contains(policyName)))
             {
                 return ExceptionPolicy.HandleException(exception, policyName, out rethrowException);
             }
@@ -41,7 +42,7 @@ namespace LoadFileData
 
         public static void Try(
             Action tryAction,
-            string policyName = PolicyName.Default,
+            string policyName = null,
             Action finallyAction = null)
         {
             try
@@ -64,7 +65,7 @@ namespace LoadFileData
             {
                 if (finallyAction != null)
                 {
-                    Try(finallyAction, policyName);
+                    Try(finallyAction);
                 }
             }
         }

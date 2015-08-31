@@ -13,7 +13,7 @@ namespace LoadFileData.FileHandlers
     public class FileHandler : IFileHandler, IRecoverWorkflow
     {
         private readonly FileHandlerSettings settings;
-        private readonly IDataService service;
+        private readonly IServiceFactory serviceFactory;
         private readonly IContentReader reader;
         private readonly IContentHandler contentHandler;
         private readonly string destinationPathTemplate;
@@ -23,7 +23,7 @@ namespace LoadFileData.FileHandlers
         {
             this.settings = settings;
             contentHandler = settings.ContentHandler;
-            service = settings.Service;
+            serviceFactory = settings.ServiceFactory;
             reader = settings.Reader;
             destinationPathTemplate = settings.DestinationPathTemplate;
             streamManager = settings.StreamManager;
@@ -31,7 +31,6 @@ namespace LoadFileData.FileHandlers
 
         public void Dispose()
         {
-            service.Dispose();
         }
 
         public static string GetHash(Stream stream)
@@ -68,29 +67,32 @@ namespace LoadFileData.FileHandlers
             };
             try
             {
-                fileSource = service.AddFileSource(fileSource);
-                if (service.IsDuplicate(fileSource))
+                using (var service = serviceFactory.Create())
                 {
-                    return;
+                    fileSource = service.AddFileSource(fileSource);
+                    if (service.IsDuplicate(fileSource))
+                    {
+                        return;
+                    }
+                    var totalRows = reader.RowCount(stream);
+                    service.UpdateTotalRows(fileSource, totalRows);
+                    var enumerator = reader.ReadContent(stream);
+                    var context = new ContentHandlerContext
+                    {
+                        Content = enumerator,
+                        FileName = fullPath
+                    };
+                    ProcessFile(service, fileSource, context, token);
                 }
-                var totalRows = reader.RowCount(stream);
-                service.UpdateTotalRows(fileSource, totalRows);
-                var enumerator = reader.ReadContent(stream);
-                var context = new ContentHandlerContext
-                {
-                    Content = enumerator,
-                    FileName = fullPath
-                };
-                ProcessFile(fileSource, context, token);
             }
             catch (Exception ex)
             {
-                service.LogError(fileSource, ex);
                 ExceptionHandler.HandleException(ex, GetType().Name);
+                ReportError(fileSource.OriginalFileName, ex);
             }
         }
 
-        private void ProcessFile(FileSource fileSource, ContentHandlerContext context, CancellationToken token)
+        private void ProcessFile(IDataService service, FileSource fileSource, ContentHandlerContext context, CancellationToken token)
         {
             var rowCount = 1;
             service.MarkFileExtracting(fileSource);
@@ -113,21 +115,27 @@ namespace LoadFileData.FileHandlers
 
         public void ReportError(string fullPath, Exception exception)
         {
-            service.LogError(fullPath, exception);
+            using (var service = serviceFactory.Create())
+            {
+                service.LogError(fullPath, exception);
+            }
         }
 
         public void RecoverExistingFiles(CancellationToken token)
         {
-            foreach (var fileSource in service.PendingExtration(settings.Name))
+            using (var service = serviceFactory.Create())
             {
-                var stream = streamManager.OpenRead(fileSource.CurrentFileName);
-                var enumerator = reader.ReadContent(stream);
-                var context = new ContentHandlerContext
+                foreach (var fileSource in service.PendingExtration(settings.Name))
                 {
-                    Content = enumerator,
-                    FileName = fileSource.OriginalFileName
-                };
-                ProcessFile(fileSource, context, token);
+                    var stream = streamManager.OpenRead(fileSource.CurrentFileName);
+                    var enumerator = reader.ReadContent(stream);
+                    var context = new ContentHandlerContext
+                    {
+                        Content = enumerator,
+                        FileName = fileSource.OriginalFileName
+                    };
+                    ProcessFile(service, fileSource, context, token);
+                }
             }
         }
     }

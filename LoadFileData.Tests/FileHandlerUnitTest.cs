@@ -35,11 +35,17 @@ namespace LoadFileData.Tests
                 .Returns(1)
                 .Verifiable();
 
+            helper
+                .Mock<IServiceFactory>()
+                .Setup(f => f.Create())
+                .Returns(helper.Instance<IDataService>())
+                .Verifiable();
+
             var settings = helper.Mock<FileHandlerSettings>();
             settings.Object.DestinationPathTemplate = "template";
             settings.Object.ContentHandler = helper.Instance<IContentHandler>();
             settings.Object.Reader = helper.Instance<IContentReader>();
-            settings.Object.Service = helper.Instance<IDataService>();
+            settings.Object.ServiceFactory = helper.Instance<IServiceFactory>();
             settings.Object.StreamManager = helper.Instance<IStreamManager>();
 
             var sut = helper.Instance<FileHandler>();
@@ -51,7 +57,7 @@ namespace LoadFileData.Tests
             //Assert
             //DataService
             var service = helper.Mock<IDataService>();
-            service.Verify(srv => srv.UpdateTotalRows(It.IsAny<Guid>(), It.Is<int>(i => i == 1)));
+            service.Verify(srv => srv.UpdateTotalRows(It.IsAny<FileSource>(), It.Is<int>(i => i == 1)));
             service.Verify(srv => srv.AddDataEntry(It.IsAny<FileSource>(), It.Is<DataEntry>(d => d.Id == entryId),It.Is<int>(i => i == 1)));
             service.Verify(srv => srv.PendingExtration(It.IsAny<string>()), Times.Never);
             service.Verify(srv => srv.AddFileSource(It.IsAny<FileSource>()));
@@ -94,11 +100,17 @@ namespace LoadFileData.Tests
                 .Returns(1)
                 .Verifiable();
 
+            helper
+                .Mock<IServiceFactory>()
+                .Setup(f => f.Create())
+                .Returns(helper.Instance<IDataService>())
+                .Verifiable();
+
             var settings = helper.Mock<FileHandlerSettings>();
             settings.Object.DestinationPathTemplate = "template";
             settings.Object.ContentHandler = helper.Instance<IContentHandler>();
             settings.Object.Reader = helper.Instance<IContentReader>();
-            settings.Object.Service = helper.Instance<IDataService>();
+            settings.Object.ServiceFactory = helper.Instance<IServiceFactory>();
             settings.Object.StreamManager = helper.Instance<IStreamManager>();
 
             var sut = helper.Instance<FileHandler>();
@@ -131,12 +143,18 @@ namespace LoadFileData.Tests
                 .Returns(new[] {new FileSource {FileHash = fileHash,CurrentFileName = fileHash}}.AsQueryable())
                 .Verifiable();
 
+            helper
+                .Mock<IServiceFactory>()
+                .Setup(f => f.Create())
+                .Returns(helper.Instance<IDataService>())
+                .Verifiable();
+
             var settings = helper.Mock<FileHandlerSettings>();
             settings.Object.Name = "settingsName";
             settings.Object.DestinationPathTemplate = "template";
             settings.Object.ContentHandler = helper.Instance<IContentHandler>();
             settings.Object.Reader = helper.Instance<IContentReader>();
-            settings.Object.Service = helper.Instance<IDataService>();
+            settings.Object.ServiceFactory = helper.Instance<IServiceFactory>();
             settings.Object.StreamManager = helper.Instance<IStreamManager>();
 
             var sut = helper.Instance<FileHandler>();
@@ -148,7 +166,7 @@ namespace LoadFileData.Tests
             //Assert
             //DataService
             var service = helper.Mock<IDataService>();
-            service.Verify(srv => srv.UpdateTotalRows(It.IsAny<Guid>(), It.IsAny<int>()),Times.Never);
+            service.Verify(srv => srv.UpdateTotalRows(It.IsAny<FileSource>(), It.IsAny<int>()),Times.Never);
             service.Verify(srv => srv.AddDataEntry(It.Is<FileSource>(f=>f.FileHash==fileHash && f.CurrentFileName==fileHash), It.Is<DataEntry>(d => d.Id == entryId), It.Is<int>(i => i == 1)));
             service.Verify(srv => srv.AddFileSource(It.IsAny<FileSource>()), Times.Never);
             service.Verify(srv => srv.IsDuplicate(It.IsAny<FileSource>()), Times.Never);

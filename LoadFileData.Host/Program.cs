@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LoadFileData.Host.Properties;
 using LoadFileData.Web;
 using Microsoft.Owin.Hosting;
 
@@ -41,7 +38,7 @@ namespace LoadFileData.Host
 
                 notificationIcon = new NotifyIcon
                 {
-                    Icon = Properties.Resources.LoadFileDataIcon,
+                    Icon = Resources.LoadFileDataIcon,
                     ContextMenu = menu,
                     Text = "LoadFileData"
                 };

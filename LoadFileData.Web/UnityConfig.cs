@@ -2,6 +2,8 @@ using System;
 using System.Configuration;
 using System.Web.Http;
 using System.Web.Mvc;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
@@ -24,7 +26,7 @@ namespace LoadFileData.Web
         {
             var container = Container;
             var mvc4Resolver = new UnityDependencyResolver(container);
-            DependencyResolver.SetResolver(mvc4Resolver);            
+            DependencyResolver.SetResolver(mvc4Resolver);
         }
 
         private static IUnityContainer BuildUnityContainer()
@@ -35,6 +37,12 @@ namespace LoadFileData.Web
             var container = section.Configure(returnContainer);
             container.RegisterInstance(container);
             container.AddNewExtension<Interception>();
+
+            var config = ConfigurationSourceFactory.Create();
+            var factory = new ExceptionPolicyFactory(config);
+
+            var exManager = factory.CreateManager();
+            ExceptionPolicy.SetExceptionManager(exManager);
 
             RegisterTypes(container);
 

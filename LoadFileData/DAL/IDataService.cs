@@ -9,7 +9,6 @@ namespace LoadFileData.DAL
         FileSource AddFileSource(FileSource fileSource);
         void MarkFileExtracting(FileSource fileSource);
         void MarkFilePaused(FileSource fileSource);
-        void LogError(FileSource fileSource, Exception exception);
         void LogError(string filePath, Exception exception);
         void UpdateTotalRows(FileSource fileSource, int totalRows);
         object AddDataEntry(FileSource fileSource, object dataEntry, int rowCount);
