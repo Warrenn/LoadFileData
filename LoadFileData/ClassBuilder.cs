@@ -10,11 +10,9 @@ namespace LoadFileData
 {
     public static class ClassBuilder
     {
-        private static readonly ModuleBuilder BaseBuilder = CreateBaseBuilder();
-
         public static TypeBuilder BuildDynamicTypeWithProperties(string typeName, Type baseType = null)
         {
-            return BaseBuilder.DefineType(typeName, TypeAttributes.Public, baseType);
+            return CreateBaseBuilder().DefineType(typeName, TypeAttributes.Public, baseType);
         }
 
         public static object CreateInstance(string typeName, IDictionary<string, Type> properties, Type baseType = null)
