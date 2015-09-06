@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using LoadFileData.Converters;
 using LoadFileData.DAL.Models;
 using LoadFileData.Web.Constants;
@@ -38,10 +39,10 @@ namespace LoadFileData.Web
             return StreamManager.AppSettingsFiles(Folders.DataEntries);
         }
 
-        private static Type CreateTypeFromJson(string name, string jsonData)
+        private static Type CreateTypeFromJson(string name, string jsonData, ModuleBuilder builder)
         {
             var className = ScrubVariableName(name);
-            var builder = ClassBuilder.Build<DataEntry>(className);
+            var classBuilder = ClassBuilder.Build<DataEntry>(className);
             var properties = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonData);
 
             foreach (var property in properties)
@@ -52,12 +53,12 @@ namespace LoadFileData.Web
                     continue;
                 }
                 var propertyName = ScrubVariableName(property.Key);
-                builder = builder.Property(type, propertyName);
+                classBuilder = classBuilder.Property(type, propertyName);
             }
-            return builder.ToType();
+            return classBuilder.ToType(builder);
         }
 
-        private static IDictionary<string, Type> CreateTypeMapInternal()
+        private static IDictionary<string, Type> CreateTypeMapInternal(ModuleBuilder builder)
         {
             var dataEntryTypes = AssemblyHelper
                 .LoadableTypesOf<DataEntry>()
@@ -71,15 +72,15 @@ namespace LoadFileData.Web
                 {
                     continue;
                 }
-                var type = CreateTypeFromJson(name, setting.Value);
+                var type = CreateTypeFromJson(name, setting.Value, builder);
                 dataEntryTypes[name] = type;
             }
             return dataEntryTypes;
         }
 
-        public IDictionary<string, Type> CreateTypeMap()
+        public IDictionary<string, Type> CreateTypeMap(ModuleBuilder builder = null)
         {
-            return CreateTypeMapInternal();
+            return CreateTypeMapInternal(builder);
         }
     }
 }

@@ -10,25 +10,31 @@ namespace LoadFileData
 {
     public static class ClassBuilder
     {
-        public static TypeBuilder BuildDynamicTypeWithProperties(string typeName, Type baseType = null)
+        public static TypeBuilder BuildDynamicTypeWithProperties(string typeName, Type baseType = null, ModuleBuilder builder = null)
         {
-            return CreateBaseBuilder().DefineType(typeName, TypeAttributes.Public, baseType);
+            if (builder == null)
+            {
+                builder = CreateBaseBuilder();
+            }
+            return builder.DefineType(typeName, TypeAttributes.Public, baseType);
         }
 
-        public static object CreateInstance(string typeName, IDictionary<string, Type> properties, Type baseType = null)
+        public static object CreateInstance(string typeName, IDictionary<string, Type> properties, Type baseType = null,
+            ModuleBuilder builder = null)
         {
-            var type = CreateType(typeName, properties, baseType);
+            var type = CreateType(typeName, properties, baseType, builder);
             return Activator.CreateInstance(type);
         }
 
-        public static Type CreateType(string typeName, IDictionary<string, Type> properties, Type baseType = null)
+        public static Type CreateType(string typeName, IDictionary<string, Type> properties, Type baseType = null,
+            ModuleBuilder builder = null)
         {
-            var builder = BuildDynamicTypeWithProperties(typeName, baseType);
+            var typeBuilder = BuildDynamicTypeWithProperties(typeName, baseType, builder);
             foreach (var property in properties)
             {
-                AddProperty(builder, property.Value, property.Key);
+                AddProperty(typeBuilder, property.Value, property.Key);
             }
-            return builder.CreateType();
+            return typeBuilder.CreateType();
         }
 
         public static void AddProperty<T>(TypeBuilder builder, string propertyName)
@@ -74,7 +80,7 @@ namespace LoadFileData
             custNamePropBldr.SetSetMethod(custNameSetPropMthdBldr);
         }
 
-        private static ModuleBuilder CreateBaseBuilder()
+        public static ModuleBuilder CreateBaseBuilder()
         {
             var myDomain = Thread.GetDomain();
             var myAsmName = Assembly.GetExecutingAssembly().GetName();
@@ -131,20 +137,20 @@ namespace LoadFileData
                 return Property(typeof (T));
             }
 
-            public Type ToType()
+            public Type ToType(ModuleBuilder builder =  null)
             {
-                return CreateType(className, properties, baseType);
+                return CreateType(className, properties, baseType, builder);
             }
 
-            public object ToInstance()
+            public object ToInstance(ModuleBuilder builder = null)
             {
-                var type = CreateType(className, properties, baseType);
+                var type = CreateType(className, properties, baseType, builder);
                 return Activator.CreateInstance(type);
             }
 
-            public dynamic ToDynamic()
+            public dynamic ToDynamic(ModuleBuilder builder = null)
             {
-                var type = CreateType(className, properties, baseType);
+                var type = CreateType(className, properties, baseType, builder);
                 return new DynamicProperties(type);
             }
         }
