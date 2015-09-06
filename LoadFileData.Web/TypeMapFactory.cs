@@ -11,8 +11,6 @@ namespace LoadFileData.Web
 {
     public class TypeMapFactory : ITypeMapFactory
     {
-        private static readonly Lazy<IDictionary<string, Type>> lazyTypeMap = new Lazy<IDictionary<string, Type>>(CreateTypeMapInternal);
-
         public static string ScrubVariableName(string variableName)
         {
             var value = new char[variableName.Length];
@@ -81,7 +79,7 @@ namespace LoadFileData.Web
 
         public IDictionary<string, Type> CreateTypeMap()
         {
-            return lazyTypeMap.Value;
+            return CreateTypeMapInternal();
         }
     }
 }

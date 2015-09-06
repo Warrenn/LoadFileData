@@ -7,25 +7,20 @@ namespace LoadFileData.Web
 {
     public class ServiceFactory : IServiceFactory
     {
-        private readonly IDictionary<string, Type> typeMap;
-        private readonly Lazy<Type> lazyClass;
+        private readonly ITypeMapFactory typeMapFactory;
 
         public ServiceFactory(ITypeMapFactory typeMapFactory)
         {
-            lazyClass =  new Lazy<Type>(CreateServiceType);
-            typeMap = typeMapFactory.CreateTypeMap();
-        }
-
-        private Type CreateServiceType()
-        {
-            var classBuilder = ClassBuilder.Build<DbContextBase>("WebDbContext");
-            classBuilder = typeMap.Values.Aggregate(classBuilder, (current, type) => current.CreateSet(type));
-            return classBuilder.ToType();
+            this.typeMapFactory = typeMapFactory;
         }
 
         public IDataService Create()
         {
-            var dbInstance = Activator.CreateInstance(lazyClass.Value);
+            var typeMap = typeMapFactory.CreateTypeMap();
+            var classBuilder = ClassBuilder.Build<DbContextBase>("WebDbContext");
+            classBuilder = typeMap.Values.Aggregate(classBuilder, (current, type) => current.CreateSet(type));
+            var dataServiceType = classBuilder.ToType();
+            var dbInstance = Activator.CreateInstance(dataServiceType);
             var dataServie = new DataService(dbInstance as DbContextBase);
             return dataServie;
         }

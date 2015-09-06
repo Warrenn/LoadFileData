@@ -200,6 +200,7 @@
     <Compile Include="FixedWidthReaderUnitTest.cs" />
     <Compile Include="ConverterManagerUnitTest.cs" />
     <Compile Include="FileHandlerUnitTest.cs" />
+    <Compile Include="ClassBuilderUnitTest.cs" />
     <Compile Include="XlsxReaderUnitTest.cs" />
     <Compile Include="XlsReaderUnitTest.cs" />
   </ItemGroup>
