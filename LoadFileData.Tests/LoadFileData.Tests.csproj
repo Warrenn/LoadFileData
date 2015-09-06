@@ -208,7 +208,6 @@
     <Content Include="App.config">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="Resources\Empty.xlsx" />
     <None Include="Resources\Test.xls" />
     <None Include="Resources\Test.xlsx" />
   </ItemGroup>

@@ -63,16 +63,6 @@ namespace LoadFileData.Tests.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] Empty_xlsx {
-            get {
-                object obj = ResourceManager.GetObject("Empty_xlsx", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] Test_xls {
             get {
                 object obj = ResourceManager.GetObject("Test_xls", resourceCulture);

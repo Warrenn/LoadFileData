@@ -25,11 +25,6 @@ namespace LoadFileData.ContentReaders
             var range = settings.Range;
             var dimension = worksheet.Dimension;
 
-            if (dimension == null)
-            {
-                yield break;
-            }
-
             var rowStartNo = range.RowStart;
             var colStartNo = range.ColumnStart;
             var rowEndNo = range.RowEnd ?? dimension.Rows;
@@ -87,8 +82,7 @@ namespace LoadFileData.ContentReaders
             if (rowEnd == null)
             {
                 var worksheet = GetWorkSheet(fileStream);
-                if ((worksheet == null) ||
-                    (worksheet.Dimension == null))
+                if (worksheet == null)
                 {
                     return 0;
                 }

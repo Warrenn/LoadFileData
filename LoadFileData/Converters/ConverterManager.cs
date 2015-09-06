@@ -26,7 +26,6 @@ namespace LoadFileData.Converters
                 {"float", typeof (float)},
                 {"bool", typeof (bool)},
                 {"DateTime", typeof (DateTime)},
-                {"Date", typeof (DateTime)},
                 {"string", typeof (string)},
                 {"byte?", typeof (byte?)},
                 {"char?", typeof (char?)},
@@ -35,8 +34,7 @@ namespace LoadFileData.Converters
                 {"decimal?", typeof (decimal?)},
                 {"float?", typeof (float?)},
                 {"bool?", typeof (bool?)},
-                {"DateTime?", typeof (DateTime?)},
-                {"Date?", typeof (DateTime?)}
+                {"DateTime?", typeof (DateTime?)}
             };
 
         private static readonly IDictionary<string, MethodInfo> ReflectedFunctions = GetReflectedFunctions();
