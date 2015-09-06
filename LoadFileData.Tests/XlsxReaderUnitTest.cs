@@ -43,6 +43,38 @@ namespace LoadFileData.Tests
         }
 
         [TestMethod]
+        public void EmptyXlsxMustReturnARowCountOfZero()
+        {
+            //Arrange
+            var settings = new ExcelSettings();
+            var reader = new XlsxContentReader(settings);
+            var memoryStream = new MemoryStream(Resources.Empty_xlsx);
+
+            //Act
+            var actual = reader.RowCount(memoryStream);
+
+            //Assert
+            Assert.AreEqual(0, actual);
+            
+        }
+
+        [TestMethod]
+        public void EmptyXlsxMustNotReturnAnyRows()
+        {
+            //Arrange
+            var settings = new ExcelSettings();
+            var reader = new XlsxContentReader(settings);
+            var memoryStream = new MemoryStream(Resources.Empty_xlsx);
+
+            //Act
+            var actual = reader.ReadContent(memoryStream).ToArray();
+
+            //Assert
+            Assert.AreEqual(0, actual.Length);
+            
+        }
+
+        [TestMethod]
         public void ReaderNeedsToGetCorrectCountOfRows()
         {
             //Arrange
