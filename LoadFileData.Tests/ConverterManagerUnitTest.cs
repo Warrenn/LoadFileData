@@ -59,6 +59,8 @@ namespace LoadFileData.Tests
                     {"float", typeof (float)},
                     {"bool", typeof (bool)},
                     {"DateTime", typeof (DateTime)},
+                    {"Date", typeof (DateTime)},
+                    {"Date?", typeof (DateTime?)},
                     {"string", typeof (string)},
                     {"byte?", typeof (byte?)},
                     {"char?", typeof (char?)},

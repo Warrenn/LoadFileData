@@ -32,7 +32,7 @@ namespace LoadFileData.Tests
             var helper = new MockHelper();
             var mockTypeMapFactory = helper.Mock<ITypeMapFactory>();
             mockTypeMapFactory
-                .Setup(f => f.CreateTypeMap())
+                .Setup(f => f.CreateTypeMap(null))
                 .Returns(new Dictionary<string, Type>
                 {
                     {"DateType3", typeof (TestClass)}
@@ -70,7 +70,7 @@ namespace LoadFileData.Tests
             var helper = new MockHelper();
             var mockTypeMapFactory = helper.Mock<ITypeMapFactory>();
             mockTypeMapFactory
-                .Setup(f => f.CreateTypeMap())
+                .Setup(f => f.CreateTypeMap(null))
                 .Returns(new Dictionary<string, Type>
                 {
                     {"DateType3", typeof (TestClass)}
