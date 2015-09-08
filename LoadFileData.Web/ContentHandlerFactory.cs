@@ -42,9 +42,11 @@ namespace LoadFileData.Web
         }
 
         private static readonly Lazy<IDictionary<string, CreateMethods>> LazyFactories = new Lazy
+            //todo: get all methods where the type returned is IConentHandler and the first parameter can be inherited from ContentHandlerSettings and the second from IDictionary
             <IDictionary<string, CreateMethods>>(
             () =>
-                (from info in typeof(ContentHandlerFactory).GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
+                (from type in AssemblyHelper.AllTypesInDomain()
+                 from info in type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
                  let parameters = info.GetParameters()
                  where(info.IsStatic && info.ReturnType == typeof(IContentHandler) && parameters.Count() == 2)
                  select new{info,parameters})
@@ -67,6 +69,7 @@ namespace LoadFileData.Web
 
         public IContentHandler Create(string jsonData)
         {
+            //todo: the json format needs to be able to use FileType,DataType as keys and 
             Type type = null;
             CreateMethods factory = null;
             object dictionary = null;
