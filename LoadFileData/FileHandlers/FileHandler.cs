@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -94,7 +95,7 @@ namespace LoadFileData.FileHandlers
 
         private void ProcessFile(IDataService service, FileSource fileSource, ContentHandlerContext context, CancellationToken token)
         {
-            var rowCount = 1;
+            var rowCount = fileSource.CurrentRow;
             service.MarkFileExtracting(fileSource);
             if (token.IsCancellationRequested)
             {
@@ -108,6 +109,7 @@ namespace LoadFileData.FileHandlers
                     return;
                 }
                 service.AddDataEntry(fileSource, dataEntry, rowCount);
+                service.UpdateTotalRows(fileSource, rowCount);
                 rowCount++;
             }
             service.MarkFileComplete(fileSource);
@@ -129,9 +131,10 @@ namespace LoadFileData.FileHandlers
                 {
                     var stream = streamManager.OpenRead(fileSource.CurrentFileName);
                     var enumerator = reader.ReadContent(stream);
+                    
                     var context = new ContentHandlerContext
                     {
-                        Content = enumerator,
+                        Content = enumerator.Skip(fileSource.CurrentRow),
                         FileName = fileSource.OriginalFileName
                     };
                     ProcessFile(service, fileSource, context, token);

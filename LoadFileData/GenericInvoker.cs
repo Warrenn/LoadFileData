@@ -103,7 +103,7 @@ namespace LoadFileData
         public static MethodInfo MethodInfo(string methodName, Type callingType, BindingFlags flags,
             Type[] argumentTypes)
         {
-            var key = string.Format("{0}.{1}", callingType.GUID, methodName);
+            var key = $"{callingType.GUID}.{methodName}";
             var lazy = MethodInfos
                 .GetOrAdd(key, new Lazy<MethodInfo>(
                     () => callingType.GetMethod(methodName, flags, null, argumentTypes, null)));

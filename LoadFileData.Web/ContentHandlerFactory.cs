@@ -42,20 +42,25 @@ namespace LoadFileData.Web
         }
 
         private static readonly Lazy<IDictionary<string, CreateMethods>> LazyFactories = new Lazy
-            //todo: get all methods where the type returned is IConentHandler and the first parameter can be inherited from ContentHandlerSettings and the second from IDictionary
             <IDictionary<string, CreateMethods>>(
             () =>
                 (from type in AssemblyHelper.AllTypesInDomain()
                  from info in type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
                  let parameters = info.GetParameters()
-                 where(info.IsStatic && info.ReturnType == typeof(IContentHandler) && parameters.Count() == 2)
-                 select new{info,parameters})
+                 where (
+                 info.IsStatic &&
+                 (info.ReturnType == typeof(IContentHandler)) &&
+                 (parameters.Count() == 2) &&
+                 (parameters[0].ParameterType.IsAssignableFrom(typeof(ContentHandlerSettings))) &&
+                 parameters[1].ParameterType.IsGenericType &&
+                 parameters[1].ParameterType.GetGenericTypeDefinition().IsAssignableFrom(typeof(IDictionary<,>)))
+                 select new { info, parameters })
                  .ToDictionary(m => m.info.Name, m => new CreateMethods
-                    {
-                        CreateDictionary = (reader, serializer) => serializer.Deserialize(reader, m.parameters[1].ParameterType),
-                        CreateHandler = (settings, o) => (IContentHandler)m.info.Invoke(null, new[] { settings, o }),
-                        CreateSettings = type => (ContentHandlerSettings)Activator.CreateInstance(m.parameters[0].ParameterType, type)
-                    }, StringComparer.InvariantCultureIgnoreCase)
+                 {
+                     CreateDictionary = (reader, serializer) => serializer.Deserialize(reader, m.parameters[1].ParameterType),
+                     CreateHandler = (settings, o) => (IContentHandler)m.info.Invoke(null, new[] { settings, o }),
+                     CreateSettings = type => (ContentHandlerSettings)Activator.CreateInstance(m.parameters[0].ParameterType, type)
+                 }, StringComparer.InvariantCultureIgnoreCase)
             );
 
         private readonly IDictionary<string, Type> typeMap;

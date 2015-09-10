@@ -20,10 +20,7 @@ namespace LoadFileData
         {
         }
 
-        public object Instance
-        {
-            get { return instance; }
-        }
+        public object Instance => instance;
 
         public DynamicProperties(object instance)
         {
@@ -66,10 +63,7 @@ namespace LoadFileData
             var instanceGuid = instanceType.GUID + ".";
 
             var propertyInfo = GetPropertyInfo(propertyName, instanceGuid, instanceType);
-            if (propertyInfo != null)
-            {
-                propertyInfo.SetMethod.Invoke(instance, new[] {value});
-            }
+            propertyInfo?.SetMethod.Invoke(instance, new[] {value});
         }
 
         public static object GetValue(object instance, string propertyName)
@@ -78,7 +72,7 @@ namespace LoadFileData
             var instanceGuid = instanceType.GUID + ".";
 
             var propertyInfo = GetPropertyInfo(propertyName, instanceGuid, instanceType);
-            return propertyInfo != null ? propertyInfo.GetMethod.Invoke(instance, null) : null;
+            return propertyInfo?.GetMethod.Invoke(instance, null);
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)

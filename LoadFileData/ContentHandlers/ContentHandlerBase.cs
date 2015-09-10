@@ -51,7 +51,7 @@ namespace LoadFileData.ContentHandlers
 
                 for (var i = 0; i < content.Length; i++)
                 {
-                    var field = fieldLookup.ContainsKey(i) ? fieldLookup[i] : string.Format("Column{0}", i);
+                    var field = fieldLookup.ContainsKey(i) ? fieldLookup[i] : $"Column{i}";
                     keyValues.Add(field, content[i]);
                 }
                 yield return Convert(keyValues);

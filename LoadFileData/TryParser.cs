@@ -130,7 +130,7 @@ namespace LoadFileData
             {
                 return (T)value;
             }
-            var stringValue = string.Format("{0}", value);
+            var stringValue = $"{value}";
             if (string.IsNullOrEmpty(stringValue))
             {
                 return null;

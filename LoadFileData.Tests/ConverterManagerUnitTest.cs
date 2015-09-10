@@ -23,7 +23,7 @@ namespace LoadFileData.Tests
         [Converter(Name = "ConvertMe")]
         public static Func<object, string> Convert(int a, bool? b, string c, DateTime time, DateTime? time2)
         {
-            return o => string.Format("a:{0} b:{1} c:{2} time:{3} o:{4} time2:{5}", a, b, c, time, o, time2);
+            return o => $"a:{a} b:{b} c:{c} time:{time} o:{o} time2:{time2}";
         }
 
         [Converter]

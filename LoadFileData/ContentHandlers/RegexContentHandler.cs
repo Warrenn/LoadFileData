@@ -27,7 +27,7 @@ namespace LoadFileData.ContentHandlers
             var lookup = new Dictionary<int, string>();
             for (var i = 0; i < values.Length; i++)
             {
-                var value = string.Format("{0}", values[i]);
+                var value = $"{values[i]}";
                 foreach (var expression in fieldExpressions.Where(expression => Regex.IsMatch(value, expression.Value,
                     RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase |
                     RegexOptions.Singleline)))
