@@ -17,10 +17,7 @@ namespace LoadFileData.Web
         private static readonly Lazy<IUnityContainer> LazyContainer
             = new Lazy<IUnityContainer>(BuildUnityContainer);
 
-        public static IUnityContainer Container
-        {
-            get { return LazyContainer.Value; }
-        }
+        public static IUnityContainer Container => LazyContainer.Value;
 
         public static void Initialize(HttpConfiguration config)
         {

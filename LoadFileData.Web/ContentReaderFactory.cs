@@ -44,9 +44,7 @@ namespace LoadFileData.Web
 
         private static T[] Array<T>(JArray dataArray, params T[] defaultValue)
         {
-            return (dataArray == null)
-                ? defaultValue
-                : (dataArray).Select(t => t.Value<T>()).ToArray();
+            return dataArray?.Select(t => t.Value<T>()).ToArray() ?? defaultValue;
         }
 
         #region Implementation of IContentReaderFactory

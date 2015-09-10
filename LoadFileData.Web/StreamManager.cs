@@ -36,7 +36,7 @@ namespace LoadFileData.Web
             if (string.IsNullOrEmpty(settingsFolder) || !Directory.Exists(settingsFolder))
             {
                 throw new SettingsPropertyWrongTypeException(
-                    string.Format("AppSetting {0} must be a reference to a folder that exists", name));
+                    $"AppSetting {name} must be a reference to a folder that exists");
             }
 
             var settings = new Dictionary<string, string>();

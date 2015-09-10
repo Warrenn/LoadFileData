@@ -134,11 +134,7 @@ namespace LoadFileData.Web
                 var propertyInfo = settings
                     .GetType()
                     .GetProperty(pair.Key);
-                if (propertyInfo == null)
-                {
-                    continue;
-                }
-                propertyInfo.SetValue(settings, Convert.ChangeType(pair.Value, propertyInfo.PropertyType));
+                propertyInfo?.SetValue(settings, Convert.ChangeType(pair.Value, propertyInfo.PropertyType));
             }
             return factory.CreateHandler(settings, dictionary);
         }
