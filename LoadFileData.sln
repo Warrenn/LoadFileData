@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData.Tests", "LoadFileData.Tests\LoadFileData.Tests.csproj", "{74AF878F-B0CC-45DA-86E9-D1B990ACA8A9}"
 EndProject
@@ -17,6 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{748EC8
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3665A0AB-E633-461C-B730-8A15B5C5333C}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadFileData.Host", "LoadFileData.Host\LoadFileData.Host.csproj", "{887A88A3-814D-4DB9-98C3-9078CCB4C63A}"
 EndProject
